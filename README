@@ -1,0 +1,19 @@
+
+TODO
+    elaborate on pseudocode for wfc alg
+    create pseudocode for player & movements
+    create pseudocode for pellets
+    start code start code start code
+
+
+
+design choices
+
+    i used a separate child class for each MazeBlock instead of a) interfaces or
+    b) making them within a single method
+    latter cuz, with constraints array, common methods, etc, made more sense to
+    have a distinct class for that. former cuz of more efficient polymorphic code
+
+    the maze is procedurally generated starting from the bottom right cuz a) the
+    constraints propagate outwards from there (and b) 'solvability' is more likely
+    if I start from the end block??)

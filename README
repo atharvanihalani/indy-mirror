@@ -1,9 +1,12 @@
 
 TODO
-    elaborate on pseudocode for wfc alg
-    create pseudocode for player & movements
-    create pseudocode for pellets
+    create pseudocode
+        EVERYTHING pellets
+        first block is always L-90 (so gotta regenerative mechanism if it's inconsistent)
+    ensure maze is solvable
     start code start code start code
+
+    add konami code easter egg??
 
 
 

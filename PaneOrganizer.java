@@ -10,11 +10,12 @@ import javafx.scene.layout.Pane;
 public class PaneOrganizer {
 
     private BorderPane root;
-
+    private Pane gamePane;
 
     public PaneOrganizer() {
-        this.root = new BorderPane();
-        new IndyGame();
+        this.gamePane = new Pane();
+        this.root = new BorderPane(this.gamePane);
+        new IndyGame(this.gamePane);
 
         this.createQuitButton();
     }

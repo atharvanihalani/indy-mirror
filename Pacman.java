@@ -31,13 +31,18 @@ public class Pacman {
      */
 
     /*
-    method to check if pacman is colliding w a wall
-        //updated continuously by timeline
-        //returns a boolean
+    helper method to return pacman's position in the array
         gets pacman's current x and y pos
         uses that to find out the current position in NESTED 2d array
             divide by blocksize (& floor) to calc outer array coordinates
             calc mod when dividing by blocksize, THEN divide by tilesize (& floor) to calc nested array coords.
+     */
+
+    /*
+    method to check if pacman is colliding w a wall
+        //updated continuously by timeline
+        //returns a boolean
+        this.getPos()
         checks if the current TILE isWall or not
      */
 

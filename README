@@ -1,14 +1,15 @@
 
 TODO
     create pseudocode
-        EVERYTHING pellets
         first block is always L-90 (so gotta regenerative mechanism if it's inconsistent)
     ensure maze is solvable
     start code start code start code
 
     add konami code easter egg??
 
-
+Questions
+    it seems super unwieldy to pass in the main gamepane to every single
+    class. am i approaching it wrong? is there a more efficient way to do it?
 
 design choices
 
@@ -20,3 +21,4 @@ design choices
     the maze is procedurally generated starting from the bottom right cuz a) the
     constraints propagate outwards from there (and b) 'solvability' is more likely
     if I start from the end block??)
+

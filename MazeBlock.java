@@ -8,6 +8,8 @@ public class MazeBlock {
     public MazeBlock() {
         this.tileArray = new MazeTile[3][3];
 
+        new MazeTile(true); //test
+
         //concrete method to instantiate the array logically
     }
 
@@ -18,6 +20,12 @@ public class MazeBlock {
         sets it up graphically within the MazeBoard
      */
 
+
+    /*
+    method to check ifTileWall
+        accepts coords of tileArray as arg
+        checks if tile isWall and returns boolean
+     */
 
 
     /*

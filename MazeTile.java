@@ -10,11 +10,32 @@ import javafx.scene.shape.Rectangle;
  */
 public class MazeTile {
 
+    private boolean isWall;
     private Rectangle myTile;
-    //instance var – is it a Wall or a Path; boolean
 
-    public MazeTile() {
+    public MazeTile(boolean isWall) {
+        this.isWall = isWall;
         this.myTile = new Rectangle(Constants.TILE_SIZE, Constants.TILE_SIZE);
+
+        this.setupTile();
+    }
+
+    /**
+     * Method that sets up the tile's initial color, and positions
+     * it graphically
+     */
+    private void setupTile() {
+        if (this.isWall) {
+            this.colorTile(Color.DARKGRAY);
+        } else {
+            this.colorTile(Color.LIGHTGRAY);
+        }
+
+        //add tile to pane
+    }
+
+    public void colorTile(Color color) {
+        this.myTile.setFill(color);
     }
 
     /*

@@ -13,7 +13,7 @@ public class MazeBoard {
         this.blockArray = new MazeBlock[Constants.NUM_COLUMNS][Constants.NUM_ROWS];
         //instantiate pelletArray with dimensions tileNum * tileNum
 
-        new MazeBlock();
+        new MazeBlock(this.gamePane);
 
         this.setupBorder();
         //this.makeExit()

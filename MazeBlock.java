@@ -1,14 +1,18 @@
 package indy;
 
+import javafx.scene.layout.Pane;
+
 public class MazeBlock {
 
+    private Pane gamePane;
     private MazeTile[][] tileArray;
     //private (uninstantiated) array storing the constraints' information
 
-    public MazeBlock() {
+    public MazeBlock(Pane gamePane) {
+        this.gamePane = gamePane;
         this.tileArray = new MazeTile[3][3];
 
-        new MazeTile(true); //test
+        new MazeTile(this.gamePane, true); //test
 
         //concrete method to instantiate the array logically
     }

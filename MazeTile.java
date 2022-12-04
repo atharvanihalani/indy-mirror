@@ -1,5 +1,6 @@
 package indy;
 
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -10,10 +11,18 @@ import javafx.scene.shape.Rectangle;
  */
 public class MazeTile {
 
-    private boolean isWall;
+    private Pane gamePane;
+    private boolean isWall; //stores whether this tile is a wall or not
     private Rectangle myTile;
 
-    public MazeTile(boolean isWall) {
+    /**
+     * constructor that initializes instance variables and sets up
+     * the tile.
+     * @param gamePane the main game pane. adds tiles directly to it.
+     * @param isWall initializes it as a wall or a path ('way')
+     */
+    public MazeTile(Pane gamePane, boolean isWall) {
+        this.gamePane = gamePane;
         this.isWall = isWall;
         this.myTile = new Rectangle(Constants.TILE_SIZE, Constants.TILE_SIZE);
 
@@ -21,8 +30,26 @@ public class MazeTile {
     }
 
     /**
-     * Method that sets up the tile's initial color, and positions
-     * it graphically
+     * overloaded constructor cuz we thought we'd have some fun with indy :)
+     * lets us initialize a maze tile with its coordinates directly
+     * @param gamePane same as before
+     * @param isWall ditto
+     * @param xPos ._.
+     * @param yPos bruh
+     */
+    public MazeTile(Pane gamePane, boolean isWall, double xPos, double yPos) {
+        this.gamePane = gamePane;
+        this.isWall = isWall;
+        this.myTile = new Rectangle(Constants.TILE_SIZE, Constants.TILE_SIZE);
+
+        this.setupTile();
+        this.setTilePos(xPos, yPos);
+    }
+
+
+    /**
+     * Method that sets up the tile's initial color, and adds it to
+     * the pane.
      */
     private void setupTile() {
         if (this.isWall) {
@@ -31,9 +58,23 @@ public class MazeTile {
             this.colorTile(Color.LIGHTGRAY);
         }
 
-        //add tile to pane
+        this.gamePane.getChildren().add(this.myTile);
     }
 
+    /**
+     * Helper method to graphically set the position of a tile
+     * @param xPos
+     * @param yPos
+     */
+    public void setTilePos(double xPos, double yPos) {
+        this.myTile.setX(xPos);
+        this.myTile.setY(yPos);
+    }
+
+    /**
+     * helper method to set/change the color of a tile
+     * @param color
+     */
     public void colorTile(Color color) {
         this.myTile.setFill(color);
     }

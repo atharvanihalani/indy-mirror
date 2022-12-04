@@ -53,9 +53,9 @@ public class MazeTile {
      */
     private void setupTile() {
         if (this.isWall) {
-            this.colorTile(Color.DARKGRAY);
+            this.colorTile(Constants.WALL_COLOR);
         } else {
-            this.colorTile(Color.LIGHTGRAY);
+            this.colorTile(Constants.WAY_COLOR);
         }
 
         this.gamePane.getChildren().add(this.myTile);

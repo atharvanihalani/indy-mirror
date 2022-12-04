@@ -1,6 +1,7 @@
 package indy;
 
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 
 public class MazeBoard {
 
@@ -16,22 +17,48 @@ public class MazeBoard {
         new MazeBlock(this.gamePane);
 
         this.setupBorder();
-        //this.makeExit()
+        this.setupExit();
         //this.makeFirstBlock() (so that pacman spawns same place)
         //this.fillMaze()
         //this.addPellets
     }
 
+    /**
+     * Method that graphically sets up the borders surrounding the maze
+     * Doesn't store em logically cuz I don't need to know about them
+     * once they've been set up.
+     */
     private void setupBorder() {
-        for (int i = 0; i <= Constants.NUM_ROWS*3; i++) {
 
+        //loop that sets up both horizontal walls simultaneously
+        for (int i = 0; i <= Constants.NUM_COLUMNS*3; i++) {
+            new MazeTile(this.gamePane, true, i*Constants.TILE_SIZE, 0);
+            new MazeTile(this.gamePane, true, (i+1)*Constants.TILE_SIZE,
+                    ((Constants.NUM_COLUMNS*3)+1)*Constants.TILE_SIZE);
+        }
+
+        //loop that sets up both vertical walls simultaneously
+        for (int i = 0; i <= Constants.NUM_ROWS*3; i++) {
+            new MazeTile(this.gamePane, true, 0, (i+1)*Constants.TILE_SIZE);
+            new MazeTile(this.gamePane, true,
+                    ((Constants.NUM_ROWS*3)+1)*Constants.TILE_SIZE,
+                    i*Constants.TILE_SIZE);
         }
     }
 
-    /*
-    helper method to set up a wall border (beyond the 2d array)
-        iteratively set up all 4 borders graphically
+    /**
+     * Sets up the exit tile at the bottom right corner, and ensures
+     * it's reachable.
      */
+    private void setupExit() {
+        MazeTile exitTile = new MazeTile(this.gamePane, false,
+                ((Constants.NUM_ROWS*3)+1)*Constants.TILE_SIZE,
+                Constants.NUM_ROWS*3*Constants.TILE_SIZE);
+        exitTile.colorTile(Color.GREEN.brighter());
+
+        //set the bottom-right-most block to be an upside down T
+    }
+
 
     /*
     method to fill the maze graphically
@@ -100,12 +127,5 @@ public class MazeBoard {
             this.removePelletAt([][])
      */
 
-    /*
-    helper method to create an exit tile
-        set the bottom-right-most border tile to be a MazeTile w
-        setFill green
-        set the bottom-right-most block to be an upside down T
-
-     */
 
 }

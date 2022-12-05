@@ -57,6 +57,10 @@ public class MazeTile {
         }
     }
 
+    public boolean getIsWall() {
+        return this.isWall;
+    }
+
     /**
      * Helper method to graphically set the position of a tile
      * @param xPos

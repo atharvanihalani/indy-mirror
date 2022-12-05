@@ -11,16 +11,14 @@ public class MazeBoard {
 
     public MazeBoard(Pane gamePane) {
         this.gamePane = gamePane;
-        this.blockArray = new MazeBlock[Constants.NUM_ROWS][Constants.NUM_COLUMNS];
+        this.blockArray = new MazeBlock[Constants.NUM_ROWS][Constants.NUM_COLS];
         //instantiate pelletArray with dimensions tileNum * tileNum
 
 
         this.setupBorder();
         this.setupExit();
+        this.setupFirstBlock(); // so that pacman spawns at the same place
 
-
-
-        //this.makeFirstBlock() (so that pacman spawns same place)
         //this.fillMaze()
         //this.addPellets
     }
@@ -33,7 +31,7 @@ public class MazeBoard {
     private void setupBorder() {
 
         //loop that sets up both horizontal walls simultaneously
-        for (int i = 0; i <= Constants.NUM_COLUMNS*3; i++) {
+        for (int i = 0; i <= Constants.NUM_COLS *3; i++) {
             new MazeTile(this.gamePane, true, i*Constants.TILE_SIZE, 0);
             new MazeTile(this.gamePane, true, (i+1)*Constants.TILE_SIZE,
                     ((Constants.NUM_ROWS*3)+1)*Constants.TILE_SIZE);
@@ -43,7 +41,7 @@ public class MazeBoard {
         for (int i = 0; i <= Constants.NUM_ROWS*3; i++) {
             new MazeTile(this.gamePane, true, 0, (i+1)*Constants.TILE_SIZE);
             new MazeTile(this.gamePane, true,
-                    ((Constants.NUM_COLUMNS*3)+1)*Constants.TILE_SIZE,
+                    ((Constants.NUM_COLS *3)+1)*Constants.TILE_SIZE,
                     i*Constants.TILE_SIZE);
         }
     }
@@ -54,11 +52,20 @@ public class MazeBoard {
      */
     private void setupExit() {
         MazeTile exitTile = new MazeTile(this.gamePane, false,
-                ((Constants.NUM_COLUMNS*3)+1)*Constants.TILE_SIZE,
-                Constants.NUM_ROWS*3*Constants.TILE_SIZE);
+                ((Constants.NUM_COLS *3)+1)*Constants.TILE_SIZE,
+                (Constants.NUM_ROWS*3-1)*Constants.TILE_SIZE);
         exitTile.colorTile(Color.GREEN.brighter());
 
-        //set the bottom-right-most block to be an upside down T
+//        note the NUM_ROWS and NUM_COLS arguments are 'switched; because
+//        the array's been set up in row-major format
+        this.blockArray[Constants.NUM_ROWS-1][Constants.NUM_COLS -1] =
+                new TeeBlock(this.gamePane, Constants.NUM_COLS -1,
+                        Constants.NUM_ROWS-1);
+    }
+
+    private void setupFirstBlock() {
+        this.blockArray[0][0] = new EllBlock(this.gamePane, 0, 0);
+        this.blockArray[0][0].rotateBlock();
     }
 
 

@@ -16,11 +16,25 @@ public abstract class MazeBlock {
         this.setupTileArray(xIndex, yIndex);
     }
 
+    /*
+    //concrete method to rotate the array
+     */
 
+    public void rotateBlock() {
+        boolean tileA = this.tileArray[0][1].getIsWall();
+        boolean tileB = this.tileArray[1][2].getIsWall();
+        boolean tileC = this.tileArray[2][1].getIsWall();
+        boolean tileD = this.tileArray[1][0].getIsWall();
+
+        this.tileArray[0][1].setIsWall(tileD);
+        this.tileArray[1][2].setIsWall(tileA);
+        this.tileArray[2][1].setIsWall(tileB);
+        this.tileArray[1][0].setIsWall(tileC);
+    }
 
     /**
      * Logically sets up the Tile Array for all subclasses
-     * oh god bless that sweet sweet polymorphism
+     * oh lawd bless that sweet sweet polymorphism
      */
     private void setupTileArray(int xIndex, int yIndex) {
 
@@ -51,6 +65,7 @@ public abstract class MazeBlock {
     }
 
 
+
     /*
     method that sets the position of the block
         takes in a default arg and then offsets the individual tiles
@@ -72,10 +87,7 @@ public abstract class MazeBlock {
      */
 
 
-    /*
-    //concrete method to rotate the array
-     */
 
 
-    //
+
 }

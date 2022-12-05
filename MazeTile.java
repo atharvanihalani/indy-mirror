@@ -19,46 +19,42 @@ public class MazeTile {
      * constructor that initializes instance variables and sets up
      * the tile.
      * @param gamePane the main game pane. adds tiles directly to it.
-     * @param isWall initializes it as a wall or a path ('way')
      */
-    public MazeTile(Pane gamePane, boolean isWall) {
+    public MazeTile(Pane gamePane) {
         this.gamePane = gamePane;
-        this.isWall = isWall;
         this.myTile = new Rectangle(Constants.TILE_SIZE, Constants.TILE_SIZE);
 
-        this.setupTile();
+        this.gamePane.getChildren().add(this.myTile);
     }
 
     /**
      * overloaded constructor cuz we thought we'd have some fun with indy :)
-     * lets us initialize a maze tile with its coordinates directly
+     * lets us initialize a maze tile with more specification directly
+     * helps w efficiency
      * @param gamePane same as before
      * @param isWall ditto
      * @param xPos ._.
      * @param yPos bruh
      */
-    public MazeTile(Pane gamePane, boolean isWall, double xPos, double yPos) {
+    public MazeTile(Pane gamePane, boolean isWall, int xPos, int yPos) {
         this.gamePane = gamePane;
         this.isWall = isWall;
         this.myTile = new Rectangle(Constants.TILE_SIZE, Constants.TILE_SIZE);
 
-        this.setupTile();
+        this.gamePane.getChildren().add(this.myTile);
+        this.setIsWall(this.isWall);
         this.setTilePos(xPos, yPos);
     }
 
 
-    /**
-     * Method that sets up the tile's initial color, and adds it to
-     * the pane.
-     */
-    private void setupTile() {
+    public void setIsWall(boolean isWall) {
+        this.isWall = isWall;
+
         if (this.isWall) {
             this.colorTile(Constants.WALL_COLOR);
         } else {
             this.colorTile(Constants.WAY_COLOR);
         }
-
-        this.gamePane.getChildren().add(this.myTile);
     }
 
     /**
@@ -66,7 +62,7 @@ public class MazeTile {
      * @param xPos
      * @param yPos
      */
-    public void setTilePos(double xPos, double yPos) {
+    public void setTilePos(int xPos, int yPos) {
         this.myTile.setX(xPos);
         this.myTile.setY(yPos);
     }
@@ -92,13 +88,7 @@ public class MazeTile {
 
     //getter to check if the tile is a wall or not
 
-    private void makeWall() {
-        this.myTile.setFill(Color.DARKGRAY);
-    }
 
-    private void makeWay() {
-        this.myTile.setFill(Color.LIGHTGRAY);
-    }
 
 
 }

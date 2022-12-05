@@ -2,20 +2,57 @@ package indy;
 
 import javafx.scene.layout.Pane;
 
-public class MazeBlock {
+public abstract class MazeBlock {
 
     private Pane gamePane;
     private MazeTile[][] tileArray;
+
     //private (uninstantiated) array storing the constraints' information
 
-    public MazeBlock(Pane gamePane) {
+    public MazeBlock(Pane gamePane, int xIndex, int yIndex) {
         this.gamePane = gamePane;
         this.tileArray = new MazeTile[3][3];
 
-        new MazeTile(this.gamePane, true); //test
-
-        //concrete method to instantiate the array logically
+        this.setupTileArray(xIndex, yIndex);
     }
+
+
+
+    /**
+     * Logically sets up the Tile Array for all subclasses
+     */
+    private void setupTileArray(int xIndex, int yIndex) {
+
+//        these variables store the coordinates of the (top left point
+//        of this) maze block.
+        int xPos = xIndex*Constants.TILE_SIZE*3 + Constants.TILE_SIZE;
+        int yPos = yIndex*Constants.TILE_SIZE*3 + Constants.TILE_SIZE;
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                this.tileArray[i][j] = new MazeTile(this.gamePane);
+                this.tileArray[i][j].setTilePos((xPos + j*Constants.TILE_SIZE),
+                        (yPos + i*Constants.TILE_SIZE));
+
+                this.tileArray[i][j].setIsWall(false); //TESTING
+            }
+        }
+    }
+
+    /**
+     * Accessor method for the subclasses to access the tile array
+     * @return
+     */
+    public MazeTile[][] getTileArray() {
+        return this.tileArray;
+    }
+
+
+    /*
+    method that sets the position of the block
+        takes in a default arg and then offsets the individual tiles
+        based on their position in the tileArray
+     */
 
     /*
     helper method to set up a new maze block graphically.
@@ -34,7 +71,6 @@ public class MazeBlock {
 
     /*
     //concrete method to rotate the array
-
      */
 
 

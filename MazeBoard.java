@@ -11,13 +11,14 @@ public class MazeBoard {
 
     public MazeBoard(Pane gamePane) {
         this.gamePane = gamePane;
-        this.blockArray = new MazeBlock[Constants.NUM_COLUMNS][Constants.NUM_ROWS];
+        this.blockArray = new MazeBlock[Constants.NUM_ROWS][Constants.NUM_COLUMNS];
         //instantiate pelletArray with dimensions tileNum * tileNum
 
-        new MazeBlock(this.gamePane);
 
         this.setupBorder();
         this.setupExit();
+
+
         //this.makeFirstBlock() (so that pacman spawns same place)
         //this.fillMaze()
         //this.addPellets
@@ -34,14 +35,14 @@ public class MazeBoard {
         for (int i = 0; i <= Constants.NUM_COLUMNS*3; i++) {
             new MazeTile(this.gamePane, true, i*Constants.TILE_SIZE, 0);
             new MazeTile(this.gamePane, true, (i+1)*Constants.TILE_SIZE,
-                    ((Constants.NUM_COLUMNS*3)+1)*Constants.TILE_SIZE);
+                    ((Constants.NUM_ROWS*3)+1)*Constants.TILE_SIZE);
         }
 
         //loop that sets up both vertical walls simultaneously
         for (int i = 0; i <= Constants.NUM_ROWS*3; i++) {
             new MazeTile(this.gamePane, true, 0, (i+1)*Constants.TILE_SIZE);
             new MazeTile(this.gamePane, true,
-                    ((Constants.NUM_ROWS*3)+1)*Constants.TILE_SIZE,
+                    ((Constants.NUM_COLUMNS*3)+1)*Constants.TILE_SIZE,
                     i*Constants.TILE_SIZE);
         }
     }
@@ -52,7 +53,7 @@ public class MazeBoard {
      */
     private void setupExit() {
         MazeTile exitTile = new MazeTile(this.gamePane, false,
-                ((Constants.NUM_ROWS*3)+1)*Constants.TILE_SIZE,
+                ((Constants.NUM_COLUMNS*3)+1)*Constants.TILE_SIZE,
                 Constants.NUM_ROWS*3*Constants.TILE_SIZE);
         exitTile.colorTile(Color.GREEN.brighter());
 

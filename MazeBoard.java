@@ -19,6 +19,7 @@ public class MazeBoard {
         this.setupExit();
 
 
+
         //this.makeFirstBlock() (so that pacman spawns same place)
         //this.fillMaze()
         //this.addPellets

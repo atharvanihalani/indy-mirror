@@ -1,6 +1,9 @@
 
 TODO
-    make a block next
+    add rotation
+    set up two corner blocks
+    add pacman + movement
+    add constraints
 
 
 
@@ -21,3 +24,4 @@ design choices
     constraints propagate outwards from there (and b) 'solvability' is more likely
     if I start from the end block??)
 
+    note: both sets of 2d arrays are in row major

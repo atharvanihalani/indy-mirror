@@ -20,6 +20,7 @@ public abstract class MazeBlock {
 
     /**
      * Logically sets up the Tile Array for all subclasses
+     * oh god bless that sweet sweet polymorphism
      */
     private void setupTileArray(int xIndex, int yIndex) {
 
@@ -34,9 +35,11 @@ public abstract class MazeBlock {
                 this.tileArray[i][j].setTilePos((xPos + j*Constants.TILE_SIZE),
                         (yPos + i*Constants.TILE_SIZE));
 
-                this.tileArray[i][j].setIsWall(false); //TESTING
+                this.tileArray[i][j].setIsWall(true); //TESTING
             }
         }
+
+
     }
 
     /**

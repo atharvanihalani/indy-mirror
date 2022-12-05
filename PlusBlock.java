@@ -2,13 +2,11 @@ package indy;
 
 import javafx.scene.layout.Pane;
 
-public class AyeBlock extends MazeBlock {
+public class PlusBlock extends MazeBlock {
 
-//    creates a copy of MazeBlock's generic tileArray & specifies
-//    its properties
     private MazeTile[][] tileArray;
 
-    public AyeBlock(Pane gamePane, int xIndex, int yIndex) {
+    public PlusBlock(Pane gamePane, int xIndex, int yIndex) {
         super(gamePane, xIndex, yIndex);
 
         this.tileArray = super.getTileArray();
@@ -17,8 +15,9 @@ public class AyeBlock extends MazeBlock {
 
     private void setWayTiles() {
         this.tileArray[0][1].setIsWall(false);
+        this.tileArray[1][0].setIsWall(false);
         this.tileArray[1][1].setIsWall(false);
+        this.tileArray[1][2].setIsWall(false);
         this.tileArray[2][1].setIsWall(false);
     }
-
 }

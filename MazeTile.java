@@ -90,7 +90,6 @@ public class MazeTile {
             else if !isWall then setFill ___
      */
 
-    //getter to check if the tile is a wall or not
 
 
 

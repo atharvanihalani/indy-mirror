@@ -3,6 +3,8 @@ package indy;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+
 public class MazeBoard {
 
     private Pane gamePane;
@@ -18,6 +20,7 @@ public class MazeBoard {
         this.setupBorder();
         this.setupExit();
         this.setupFirstBlock(); // so that pacman spawns at the same place
+
 
         //this.fillMaze()
         //this.addPellets
@@ -68,6 +71,80 @@ public class MazeBoard {
         this.blockArray[0][0].rotateBlock();
     }
 
+    private void setupMaze() {
+        for (int i = 0; i < Constants.NUM_ROWS; i++) {
+            for (int j = 0; j < Constants.NUM_COLS; j++) {
+                if (i == 0) {j++;} //ensures we don't replace the first block
+
+                /*
+
+                 */
+
+                //we don't replace the last block
+            }
+        }
+    }
+
+    private ArrayList<Constraints> getConstraints(int i, int j) {
+
+        ArrayList<Constraints> myConstraints = new ArrayList<>();
+
+        //checks for constraints above and below the block
+        if (i == 0) {
+            if (this.getIsXWay(i + 1, j, 0, 1)) {
+                myConstraints.add(Constraints.BELOW);
+            }
+        } else if (i == (Constants.NUM_ROWS - 1)) {
+            if (this.getIsXWay(i - 1, j, 2, 1)) {
+                myConstraints.add(Constraints.ABOVE);
+            }
+        } else {
+            if (this.getIsXWay(i + 1, j, 0, 1)) {
+                myConstraints.add(Constraints.BELOW);
+            }
+            if (this.getIsXWay(i - 1, j, 2, 1)) {
+                myConstraints.add(Constraints.ABOVE);
+            }
+        }
+
+        //checks for constraints to the left and right of the block
+        if (j == 0) {
+            if (this.getIsXWay(i, j + 1, 1, 0)) {
+                myConstraints.add(Constraints.RIGHT);
+            }
+        } else if (i == (Constants.NUM_COLS - 1)) {
+            if (this.getIsXWay(i, j - 1, 1, 2)) {
+                myConstraints.add(Constraints.LEFT);
+            }
+        } else {
+            if (this.getIsXWay(i, j + 1, 1, 0)) {
+                myConstraints.add(Constraints.RIGHT);
+            }
+            if (this.getIsXWay(i, j - 1, 1, 2)) {
+                myConstraints.add(Constraints.LEFT);
+            }
+        }
+
+        return myConstraints;
+    }
+
+    /**
+     * Helper method that returns whether a specific tile in a specific block
+     * is a 'way' or not. Returns false if the block hasn't been initialized.
+     * @param blArrRow block array row index
+     * @param blArrCol block array column index
+     * @param tlArrRow tile array row index (within that specific block)
+     * @param tlArrCol tile array column index
+     * @return
+     */
+    private boolean getIsXWay(int blArrRow, int blArrCol, int tlArrRow, int tlArrCol) {
+        if (this.blockArray[blArrRow][blArrCol] != null) {
+            return !this.blockArray[blArrRow][blArrCol].getTileArray()[tlArrRow][tlArrCol].getIsWall();
+        } else {
+            return false;
+        }
+    }
+
 
     /*
     method to fill the maze graphically
@@ -106,10 +183,6 @@ public class MazeBoard {
      */
 
 
-    /*
-    method to make the first block
-        instantiates this.blockArray[0][0]
-     */
 
 
     /*

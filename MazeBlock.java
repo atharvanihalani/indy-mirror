@@ -49,7 +49,7 @@ public abstract class MazeBlock {
                 this.tileArray[i][j].setTilePos((xPos + j*Constants.TILE_SIZE),
                         (yPos + i*Constants.TILE_SIZE));
 
-                this.tileArray[i][j].setIsWall(true); //TESTING
+                this.tileArray[i][j].setIsWall(true);
             }
         }
 

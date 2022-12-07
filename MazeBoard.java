@@ -4,6 +4,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MazeBoard {
 
@@ -18,9 +19,13 @@ public class MazeBoard {
 
 
         this.setupBorder();
-        this.setupExit();
         this.setupFirstBlock(); // so that pacman spawns at the same place
+        this.setupExit();
 
+        //TESTING
+        //System.out.println(Arrays.toString(EllBlock.getConstraints(0)));
+        System.out.println(Arrays.toString(TeeBlock.getConstraints(0)));
+        System.out.println(Arrays.toString(EllBlock.getConstraints(0)));
 
         //this.fillMaze()
         //this.addPellets
@@ -76,13 +81,19 @@ public class MazeBoard {
             for (int j = 0; j < Constants.NUM_COLS; j++) {
                 if (i == 0) {j++;} //ensures we don't replace the first block
 
+                ArrayList<Constraints> blockConstraints = this.getConstraints(i, j);
                 /*
-
+                if block doesn't have any constraints, go to previous block and regenerate
+                else
                  */
 
                 //we don't replace the last block
             }
         }
+    }
+
+    private void generateRandomBlock() {
+        //args: blocktype, block orientation, xIndex, yIndex
     }
 
     private ArrayList<Constraints> getConstraints(int i, int j) {
@@ -131,6 +142,8 @@ public class MazeBoard {
     /**
      * Helper method that returns whether a specific tile in a specific block
      * is a 'way' or not. Returns false if the block hasn't been initialized.
+     *
+     * TODO better design would delegate this method to MazeBlock (low coupling)
      * @param blArrRow block array row index
      * @param blArrCol block array column index
      * @param tlArrRow tile array row index (within that specific block)

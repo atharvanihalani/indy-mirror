@@ -1,7 +1,10 @@
 
 TODO
-    add pacman + movement
-    add constraints
+    generate the entire maze
+    add pacman graphically
+    sort pacman's movement
+    add ghost graphically
+    implement bfs
 
 
 

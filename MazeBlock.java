@@ -4,21 +4,41 @@ import javafx.scene.layout.Pane;
 
 public abstract class MazeBlock {
 
-    private Pane gamePane;
-    private MazeTile[][] tileArray;
+    private final Pane gamePane;
+    private final MazeTile[][] tileArray;
+    private static boolean[] constraintsArray;
 
     //private (uninstantiated) array storing the constraints' information
 
     public MazeBlock(Pane gamePane, int xIndex, int yIndex) {
         this.gamePane = gamePane;
         this.tileArray = new MazeTile[3][3];
+        constraintsArray = new boolean[4];
 
         this.setupTileArray(xIndex, yIndex);
+        this.setupConstraints();
     }
 
-    /*
-    //concrete method to rotate the array
+    public static boolean[] getConstraints(int rotateNumber) {
+        int rotateBy = rotateNumber % 4;
+
+        return constraintsArray;
+    }
+
+    /**
+     * initially sets up all constraints as false.
+     * they're later modified by each individual child class
      */
+    public void setupConstraints() {
+
+//        for (boolean constraint : this.constraintsArray) {
+//            constraint = true;
+//        } TODO why does this code not work??
+
+        for (int i = 0; i < 4; i++) {
+            constraintsArray[i] = false;
+        }
+    }
 
     public void rotateBlock() {
         boolean tileA = this.tileArray[0][1].getIsWall();
@@ -66,11 +86,6 @@ public abstract class MazeBlock {
 
 
 
-    /*
-    method that sets the position of the block
-        takes in a default arg and then offsets the individual tiles
-        based on their position in the tileArray
-     */
 
     /*
     helper method to set up a new maze block graphically.

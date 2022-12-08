@@ -3,9 +3,6 @@ package indy;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class MazeBoard {
 
     private Pane gamePane;
@@ -22,14 +19,12 @@ public class MazeBoard {
         this.setupFirstBlock(); // so that pacman spawns at the same place
         this.setupExit();
 
-        //TESTING
-        //System.out.println(Arrays.toString(EllBlock.getConstraints(0)));
-        System.out.println(Arrays.toString(TeeBlock.getConstraints(0)));
-        System.out.println(Arrays.toString(EllBlock.getConstraints(0)));
 
         //this.fillMaze()
         //this.addPellets
     }
+
+
 
     /**
      * Method that graphically sets up the borders surrounding the maze
@@ -81,10 +76,42 @@ public class MazeBoard {
             for (int j = 0; j < Constants.NUM_COLS; j++) {
                 if (i == 0) {j++;} //ensures we don't replace the first block
 
-                ArrayList<Constraints> blockConstraints = this.getConstraints(i, j);
+                boolean[] outerConstraints = this.getOuterConstraints(i, j);
                 /*
-                if block doesn't have any constraints, go to previous block and regenerate
-                else
+                if the outer constraints are all false, go to previous block and regenerate
+                else, continue
+                 */
+                int randomBlockSwitch = (int) Math.floor(Math.random()*5);
+                int randomRotation = (int) Math.floor(Math.random()*4);
+                boolean[] randomBlockConstraints;
+
+                switch (randomBlockSwitch) {
+                    case 0:
+                        randomBlockConstraints = Constraints.rotateBlock(
+                                Constraints.DEAD_BLOCK, randomRotation);
+                        break;
+                    case 1:
+                        randomBlockConstraints = Constraints.rotateBlock(
+                                Constraints.AYE_BLOCK, randomRotation);
+                        break;
+                    case 2:
+                        randomBlockConstraints = Constraints.rotateBlock(
+                                Constraints.ELL_BLOCK, randomRotation);
+                        break;
+                    case 3:
+                        randomBlockConstraints = Constraints.rotateBlock(
+                                Constraints.TEE_BLOCK, randomRotation);
+                        break;
+                    case 4:
+                        randomBlockConstraints = Constraints.rotateBlock(
+                                Constraints.PLUS_BLOCK, randomRotation);
+                        break;
+                }
+
+                /*
+                if the random block constraints match up with the outer constraints
+                    generate that block
+                    else, try another block
                  */
 
                 //we don't replace the last block
@@ -92,51 +119,51 @@ public class MazeBoard {
         }
     }
 
-    private void generateRandomBlock() {
-        //args: blocktype, block orientation, xIndex, yIndex
-    }
 
-    private ArrayList<Constraints> getConstraints(int i, int j) {
+    private boolean[] getOuterConstraints(int i, int j) {
 
-        ArrayList<Constraints> myConstraints = new ArrayList<>();
+        boolean[] externalConstraints = new boolean[4];
+        for (int k = 0; i < 4; i++) {
+            externalConstraints[k] = false;
+        }
 
         //checks for constraints above and below the block
         if (i == 0) {
             if (this.getIsXWay(i + 1, j, 0, 1)) {
-                myConstraints.add(Constraints.BELOW);
+                externalConstraints[2] = true;
             }
         } else if (i == (Constants.NUM_ROWS - 1)) {
             if (this.getIsXWay(i - 1, j, 2, 1)) {
-                myConstraints.add(Constraints.ABOVE);
+                externalConstraints[0] = true;
             }
         } else {
             if (this.getIsXWay(i + 1, j, 0, 1)) {
-                myConstraints.add(Constraints.BELOW);
+                externalConstraints[2] = true;
             }
             if (this.getIsXWay(i - 1, j, 2, 1)) {
-                myConstraints.add(Constraints.ABOVE);
+                externalConstraints[0] = true;
             }
         }
 
         //checks for constraints to the left and right of the block
         if (j == 0) {
             if (this.getIsXWay(i, j + 1, 1, 0)) {
-                myConstraints.add(Constraints.RIGHT);
+                externalConstraints[1] = true;
             }
         } else if (i == (Constants.NUM_COLS - 1)) {
             if (this.getIsXWay(i, j - 1, 1, 2)) {
-                myConstraints.add(Constraints.LEFT);
+                externalConstraints[3] = true;
             }
         } else {
             if (this.getIsXWay(i, j + 1, 1, 0)) {
-                myConstraints.add(Constraints.RIGHT);
+                externalConstraints[1] = true;
             }
             if (this.getIsXWay(i, j - 1, 1, 2)) {
-                myConstraints.add(Constraints.LEFT);
+                externalConstraints[3] = true;
             }
         }
 
-        return myConstraints;
+        return externalConstraints;
     }
 
     /**

@@ -2,43 +2,25 @@ package indy;
 
 import javafx.scene.layout.Pane;
 
+import java.util.Arrays;
+
 public abstract class MazeBlock {
 
     private final Pane gamePane;
     private final MazeTile[][] tileArray;
-    private static boolean[] constraintsArray;
 
     //private (uninstantiated) array storing the constraints' information
 
     public MazeBlock(Pane gamePane, int xIndex, int yIndex) {
         this.gamePane = gamePane;
         this.tileArray = new MazeTile[3][3];
-        constraintsArray = new boolean[4];
 
         this.setupTileArray(xIndex, yIndex);
-        this.setupConstraints();
     }
 
-    public static boolean[] getConstraints(int rotateNumber) {
-        int rotateBy = rotateNumber % 4;
 
-        return constraintsArray;
-    }
+    //public abstract boolean[] getConstraints(int rotateNumber);
 
-    /**
-     * initially sets up all constraints as false.
-     * they're later modified by each individual child class
-     */
-    public void setupConstraints() {
-
-//        for (boolean constraint : this.constraintsArray) {
-//            constraint = true;
-//        } TODO why does this code not work??
-
-        for (int i = 0; i < 4; i++) {
-            constraintsArray[i] = false;
-        }
-    }
 
     public void rotateBlock() {
         boolean tileA = this.tileArray[0][1].getIsWall();

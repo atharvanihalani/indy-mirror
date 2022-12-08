@@ -12,12 +12,13 @@ public class AyeBlock extends MazeBlock {
         super(gamePane, xIndex, yIndex);
 
         this.tileArray = super.getTileArray();
-        this.setWayTiles();
+        this.setWays();
     }
 
-    private void setWayTiles() {
-        this.tileArray[0][1].setIsWall(false);
+
+    private void setWays() {
         this.tileArray[1][1].setIsWall(false);
+        this.tileArray[0][1].setIsWall(false);
         this.tileArray[2][1].setIsWall(false);
     }
 

@@ -11,13 +11,14 @@ public class EllBlock extends MazeBlock {
         super(gamePane, xIndex, yIndex);
 
         this.tileArray = super.getTileArray();
-        this.setWayTiles();
+        this.setWays();
     }
 
-    private void setWayTiles() {
+
+
+    private void setWays() {
         this.tileArray[1][1].setIsWall(false);
         this.tileArray[0][1].setIsWall(false);
         this.tileArray[1][2].setIsWall(false);
-
     }
 }

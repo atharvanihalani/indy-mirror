@@ -5,6 +5,7 @@ TODO
     sort pacman's movement
     add ghost graphically
     implement bfs
+    Add a 'dud' block if the maze is too easy?
 
 
 
@@ -26,3 +27,12 @@ design choices
     if I start from the end block??)
 
     note: both sets of 2d arrays are in row major
+
+    note: when initializing a block, j and i are switched cuz i'm first setting xPos
+    THEN setting yPos. however, the row-major representation has that the other way round.
+
+
+TEMP error at
+    [1, 2]
+    [2, 0]
+    [2, 2]

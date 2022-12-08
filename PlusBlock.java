@@ -6,11 +6,12 @@ public class PlusBlock extends MazeBlock {
 
     private MazeTile[][] tileArray;
 
-    public PlusBlock(Pane gamePane, int xIndex, int yIndex) {
+    public PlusBlock(Pane gamePane, int xIndex, int yIndex, int rotateNum) {
         super(gamePane, xIndex, yIndex);
 
         this.tileArray = super.getTileArray();
         this.setWayTiles();
+        //this.rotateBlock(rotateNum);
     }
 
     private void setWayTiles() {

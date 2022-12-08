@@ -22,16 +22,21 @@ public abstract class MazeBlock {
     //public abstract boolean[] getConstraints(int rotateNumber);
 
 
-    public void rotateBlock() {
-        boolean tileA = this.tileArray[0][1].getIsWall();
-        boolean tileB = this.tileArray[1][2].getIsWall();
-        boolean tileC = this.tileArray[2][1].getIsWall();
-        boolean tileD = this.tileArray[1][0].getIsWall();
+    public void rotateBlock(int rotateNum) {
 
-        this.tileArray[0][1].setIsWall(tileD);
-        this.tileArray[1][2].setIsWall(tileA);
-        this.tileArray[2][1].setIsWall(tileB);
-        this.tileArray[1][0].setIsWall(tileC);
+        int rotateBy = rotateNum % 4;
+
+        for (int i = 0; i < rotateBy; i++) {
+            boolean tileA = this.tileArray[0][1].getIsWall();
+            boolean tileB = this.tileArray[1][2].getIsWall();
+            boolean tileC = this.tileArray[2][1].getIsWall();
+            boolean tileD = this.tileArray[1][0].getIsWall();
+
+            this.tileArray[0][1].setIsWall(tileD);
+            this.tileArray[1][2].setIsWall(tileA);
+            this.tileArray[2][1].setIsWall(tileB);
+            this.tileArray[1][0].setIsWall(tileC);
+        }
     }
 
     /**

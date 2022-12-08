@@ -11,18 +11,24 @@ public enum Constraints {
     public static boolean[] rotateBlock(boolean[] blockConstraints,
                                         int rotateNum) {
 
-        boolean[] currentConstraints = blockConstraints;
         int rotateBy = rotateNum % 4;
+        boolean[] tempConstraints = new boolean[4];
+        System.arraycopy(blockConstraints, 0, tempConstraints, 0, 4);
 
         for (int i = 0; i < rotateBy; i++) {
-            boolean firstConstraint = currentConstraints[0];
-            currentConstraints[0] = currentConstraints[3];
-            currentConstraints[3] = currentConstraints[2];
-            currentConstraints[2] = currentConstraints[1];
-            currentConstraints[1] = firstConstraint;
+            boolean constraintA = tempConstraints[0];
+            boolean constraintB = tempConstraints[1];
+            boolean constraintC = tempConstraints[2];
+            boolean constraintD = tempConstraints[3];
+
+            tempConstraints[0] = constraintD;
+            tempConstraints[3] = constraintC;
+            tempConstraints[2] = constraintB;
+            tempConstraints[1] = constraintA;
         }
 
-        return currentConstraints;
+        return tempConstraints;
+
     }
 
 }

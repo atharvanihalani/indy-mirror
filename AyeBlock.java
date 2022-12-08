@@ -8,11 +8,12 @@ public class AyeBlock extends MazeBlock {
 //    its properties
     private MazeTile[][] tileArray;
 
-    public AyeBlock(Pane gamePane, int xIndex, int yIndex) {
+    public AyeBlock(Pane gamePane, int xIndex, int yIndex, int rotateNum) {
         super(gamePane, xIndex, yIndex);
 
         this.tileArray = super.getTileArray();
         this.setWays();
+        this.rotateBlock(rotateNum % 2);
     }
 
 

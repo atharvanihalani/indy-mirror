@@ -7,11 +7,12 @@ public class EllBlock extends MazeBlock {
     private MazeTile[][] tileArray;
 
 
-    public EllBlock(Pane gamePane, int xIndex, int yIndex) {
+    public EllBlock(Pane gamePane, int xIndex, int yIndex, int rotateNum) {
         super(gamePane, xIndex, yIndex);
 
         this.tileArray = super.getTileArray();
         this.setWays();
+        this.rotateBlock(rotateNum);
     }
 
 

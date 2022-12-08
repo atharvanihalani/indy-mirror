@@ -5,6 +5,10 @@ import javafx.scene.paint.Color;
 public class Constants {
 
 
+    static final boolean[] TEE_BLOCK = {true, true, false, true};
+
+
+
     public static final int TILE_SIZE = 25;
     public static final int NUM_ROWS = 6; //of blocks
     public static final int NUM_COLS = 4;

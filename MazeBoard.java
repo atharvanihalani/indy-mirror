@@ -3,6 +3,8 @@ package indy;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+import java.util.Arrays;
+
 public class MazeBoard {
 
     private Pane gamePane;
@@ -19,10 +21,14 @@ public class MazeBoard {
         this.setupFirstBlock(); // so that pacman spawns at the same place
         this.setupExit();
 
+        this.setupMaze();
+
 
         //this.fillMaze()
         //this.addPellets
     }
+
+
 
 
 
@@ -63,67 +69,74 @@ public class MazeBoard {
 //        the array's been set up in row-major format
         this.blockArray[Constants.NUM_ROWS-1][Constants.NUM_COLS -1] =
                 new TeeBlock(this.gamePane, Constants.NUM_COLS -1,
-                        Constants.NUM_ROWS-1);
+                        Constants.NUM_ROWS-1, 0);
     }
 
     private void setupFirstBlock() {
-        this.blockArray[0][0] = new EllBlock(this.gamePane, 0, 0);
-        this.blockArray[0][0].rotateBlock();
+        this.blockArray[0][0] = new EllBlock(this.gamePane, 0, 0, 1);
     }
 
     private void setupMaze() {
         for (int i = 0; i < Constants.NUM_ROWS; i++) {
             for (int j = 0; j < Constants.NUM_COLS; j++) {
-                if (i == 0) {j++;} //ensures we don't replace the first block
 
-                boolean[] outerConstraints = this.getOuterConstraints(i, j);
-                /*
-                if the outer constraints are all false, go to previous block and regenerate
-                else, continue
-                 */
-                int randomBlockSwitch = (int) Math.floor(Math.random()*5);
-                int randomRotation = (int) Math.floor(Math.random()*4);
-                boolean[] randomBlockConstraints;
-
-                switch (randomBlockSwitch) {
-                    case 0:
-                        randomBlockConstraints = Constraints.rotateBlock(
-                                Constraints.DEAD_BLOCK, randomRotation);
-                        break;
-                    case 1:
-                        randomBlockConstraints = Constraints.rotateBlock(
-                                Constraints.AYE_BLOCK, randomRotation);
-                        break;
-                    case 2:
-                        randomBlockConstraints = Constraints.rotateBlock(
-                                Constraints.ELL_BLOCK, randomRotation);
-                        break;
-                    case 3:
-                        randomBlockConstraints = Constraints.rotateBlock(
-                                Constraints.TEE_BLOCK, randomRotation);
-                        break;
-                    case 4:
-                        randomBlockConstraints = Constraints.rotateBlock(
-                                Constraints.PLUS_BLOCK, randomRotation);
-                        break;
+                //ensures we don't replace the first or last block
+                if ((i == 0 && j == 0) || (i == Constants.NUM_ROWS - 1 &&
+                        j == Constants.NUM_COLS-1)) {
+                    continue;
                 }
 
-                /*
-                if the random block constraints match up with the outer constraints
-                    generate that block
-                    else, try another block
-                 */
+                int randomBlockSwitch = (int) Math.floor(Math.random()*5);
+                int randomRotation = (int) Math.floor(Math.random()*4);
 
-                //we don't replace the last block
+                boolean[] outerConstraints = this.getOuterConstraints(i, j);
+                boolean[] innerConstraints = this.tryRandomBlock(i, j,
+                        randomBlockSwitch, randomRotation);
+
+                System.out.println(randomBlockSwitch + " " + randomRotation);
+
+                boolean backtrack = true;
+                for (boolean bool : outerConstraints) {
+                    if (bool) {
+                        backtrack = false;
+                        break;
+                    }
+                }
+                System.out.println(backtrack);
+//                if (backtrack) {
+//                    System.out.println(String.format("GOTTA BACKTRACK @ COORDS: [%s, %s]", i, j));
+//                    if (j == 0) {
+//                        j = Constants.NUM_COLS - 2;
+//                        i--;
+//                    } else if (j == 1) {
+//                        j = Constants.NUM_COLS - 1;
+//                        i--;
+//                    } else {
+//                        j--;
+//                    }
+//                }
+
+
+
+                if (!checkConstraintsMatch(
+                        outerConstraints, innerConstraints)) {
+                    //System.out.println(String.format("lol try again chut: [%s, %s] \r\n", i, j));
+
+                    if (j == 0) {
+                        j = Constants.NUM_COLS - 1;
+                        i--;
+                    } else {
+                        j--;
+                    }
+                }
             }
         }
     }
 
-
     private boolean[] getOuterConstraints(int i, int j) {
 
         boolean[] externalConstraints = new boolean[4];
-        for (int k = 0; i < 4; i++) {
+        for (int k = 0; k < 4; k++) {
             externalConstraints[k] = false;
         }
 
@@ -150,7 +163,7 @@ public class MazeBoard {
             if (this.getIsXWay(i, j + 1, 1, 0)) {
                 externalConstraints[1] = true;
             }
-        } else if (i == (Constants.NUM_COLS - 1)) {
+        } else if (j == (Constants.NUM_COLS - 1)) {
             if (this.getIsXWay(i, j - 1, 1, 2)) {
                 externalConstraints[3] = true;
             }
@@ -165,6 +178,60 @@ public class MazeBoard {
 
         return externalConstraints;
     }
+
+    private boolean[] tryRandomBlock(int i, int j, int randomBlockSwitch,
+                                     int randomRotation) {
+        boolean[] randomBlockConstraints;
+
+        switch (randomBlockSwitch) {
+            case 0:
+                randomBlockConstraints = Constraints.rotateBlock(
+                        Constraints.DEAD_BLOCK, randomRotation);
+                this.blockArray[i][j] = new DeadBlock(
+                        this.gamePane, j, i, randomRotation);
+                break;
+            case 1:
+                randomBlockConstraints = Constraints.rotateBlock(
+                        Constraints.AYE_BLOCK, randomRotation);
+                this.blockArray[i][j] = new AyeBlock(
+                        this.gamePane, j, i, randomRotation);
+                break;
+            case 2:
+                randomBlockConstraints = Constraints.rotateBlock(
+                        Constraints.ELL_BLOCK, randomRotation);
+                this.blockArray[i][j] = new EllBlock(
+                        this.gamePane, j, i, randomRotation);
+                break;
+            case 3:
+                randomBlockConstraints = Constraints.rotateBlock(
+                        Constraints.TEE_BLOCK, randomRotation);
+                this.blockArray[i][j] = new TeeBlock(
+                        this.gamePane, j, i, randomRotation);
+                break;
+            case 4:
+                randomBlockConstraints = Constraints.rotateBlock(
+                        Constraints.PLUS_BLOCK, randomRotation);
+                this.blockArray[i][j] = new PlusBlock(
+                        this.gamePane, j, i, randomRotation);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + randomBlockSwitch);
+        }
+
+        return randomBlockConstraints;
+    }
+
+    private boolean checkConstraintsMatch(boolean[] outerConstraints,
+                                       boolean[] innerConstraints) {
+        boolean constraintsMatch = true;
+        for (int i = 0; i < 4; i++) {
+            if (outerConstraints[i] && !innerConstraints[i]) {
+                constraintsMatch = false;
+            }
+        }
+        return constraintsMatch;
+    }
+
 
     /**
      * Helper method that returns whether a specific tile in a specific block

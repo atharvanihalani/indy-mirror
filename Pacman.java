@@ -1,11 +1,44 @@
 package indy;
 
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
+
 public class Pacman {
 
-    public Pacman() {
+    private StackPane pacPane;
+    private Pane gamePane;
+    public Pacman(Pane gamePane) {
+        this.gamePane = gamePane;
+        this.pacPane = new StackPane();
 
-        //createPacman
-        //placePacman
+        this.setupPac();
+
+        this.pacPane.setLayoutX(50);
+        this.pacPane.setLayoutY(50);
+        this.pacPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderStroke.THIN)));
+        System.out.println(this.pacPane.getBoundsInParent());
+        System.out.println(this.pacPane.getLayoutBounds());
+        System.out.println(this.pacPane.getBoundsInLocal());
+    }
+
+    private void setupPac() {
+        double openMouth = 5.0;
+        //TODO make these constants
+        Circle pacCircle = new Circle(12, Color.YELLOW);
+        Polygon pacMouth = new Polygon(0, 10-openMouth, 0, 10+openMouth, 15, 10);
+        pacMouth.setFill(Color.BLACK);
+
+        this.pacPane.setMaxWidth(24);
+        this.pacPane.setMaxHeight(24);
+
+        this.pacPane.getChildren().addAll(pacCircle, pacMouth);
+        this.gamePane.getChildren().add(this.pacPane);
+//        pacCircle.setCenterX(100);
+//        pacCircle.setCenterY(100);
+//        pacMouth.setLayoutX(100);
+//        pacMouth.setLayoutY(100);
     }
 
     /*

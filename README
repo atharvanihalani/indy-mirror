@@ -1,11 +1,11 @@
 
 TODO
-    generate the entire maze
+    implement backtracking for the maze
+        Add a 'dud' block if the maze is too easy?
     add pacman graphically
     sort pacman's movement
     add ghost graphically
     implement bfs
-    Add a 'dud' block if the maze is too easy?
 
 
 

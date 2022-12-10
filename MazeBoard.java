@@ -3,6 +3,7 @@ package indy;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MazeBoard {
@@ -20,11 +21,10 @@ public class MazeBoard {
         this.setupBorder();
         this.setupFirstBlock(); // so that pacman spawns at the same place
         this.setupExit();
-
         this.setupMaze();
 
-
-        //this.fillMaze()
+        new Pacman(this.gamePane);
+        //add pacman
         //this.addPellets
     }
 
@@ -86,51 +86,92 @@ public class MazeBoard {
                     continue;
                 }
 
-                int randomBlockSwitch = (int) Math.floor(Math.random()*5);
+                int randomBlockSwitch = (int) Math.floor(Math.random()*30);
                 int randomRotation = (int) Math.floor(Math.random()*4);
+
+                System.out.println(String.format("Currently iterating through block [%s, %s] \r\n" +
+                        "random block: %s \r\n" +
+                        "random rotation: %s", i, j, randomBlockSwitch, randomRotation));
 
                 boolean[] outerConstraints = this.getOuterConstraints(i, j);
                 boolean[] innerConstraints = this.tryRandomBlock(i, j,
                         randomBlockSwitch, randomRotation);
 
-                System.out.println(randomBlockSwitch + " " + randomRotation);
-
-                boolean backtrack = true;
-                for (boolean bool : outerConstraints) {
-                    if (bool) {
-                        backtrack = false;
-                        break;
-                    }
+                ArrayList<Object> backtrackingInfo = this.checkBacktracking(outerConstraints, i, j);
+                if ((boolean) backtrackingInfo.get(0)) {
+                    i = (int) backtrackingInfo.get(1);
+                    j = (int) backtrackingInfo.get(2);
+                    continue;
                 }
-                System.out.println(backtrack);
-//                if (backtrack) {
-//                    System.out.println(String.format("GOTTA BACKTRACK @ COORDS: [%s, %s]", i, j));
-//                    if (j == 0) {
-//                        j = Constants.NUM_COLS - 2;
-//                        i--;
-//                    } else if (j == 1) {
-//                        j = Constants.NUM_COLS - 1;
-//                        i--;
-//                    } else {
-//                        j--;
-//                    }
-//                }
 
-
-
+                boolean isLast = false;
+                if (i == Constants.NUM_ROWS - 1 && j == Constants.NUM_COLS - 2) {
+                    isLast = true;
+                }
                 if (!checkConstraintsMatch(
-                        outerConstraints, innerConstraints)) {
-                    //System.out.println(String.format("lol try again chut: [%s, %s] \r\n", i, j));
-
+                        outerConstraints, innerConstraints, isLast)) {
+                    System.out.println("lol chutiya, try again \r\n");
                     if (j == 0) {
                         j = Constants.NUM_COLS - 1;
                         i--;
                     } else {
                         j--;
                     }
+                } else {
+                    System.out.println("block gen successful \r\n");
                 }
             }
         }
+    }
+
+    private ArrayList<Object> checkBacktracking(boolean[] outerConstraints, int i, int j) {
+
+        ArrayList<Object> backtrackingInfo = new ArrayList<>();
+
+        boolean backtrack = true;
+        if (outerConstraints[0] || outerConstraints[3]) {
+            backtrack = false;
+        }
+
+        backtrackingInfo.add(backtrack);
+
+
+        System.out.println("backtracking? " + backtrack);
+
+        boolean whereToBacktrack = true;
+        switch ((int) Math.floor(Math.random()*2)) {
+            case 0:
+            case 1:
+                whereToBacktrack = false;
+        }
+
+        System.out.println("backtracking to: " + whereToBacktrack);
+
+        if (backtrack) {
+            if (j == 0) {
+                j--;
+                i--;
+            } else if (j == 1) {
+                if (whereToBacktrack) {
+                    j = Constants.NUM_COLS - 1;
+                    i--;
+                } else {
+                    j--;
+                    i--;
+                }
+            } else {
+                if (!whereToBacktrack && i != 0) {
+                    j--;
+                    i--;
+                } else {
+                    j = j - 2;
+                }
+            }
+        }
+
+        backtrackingInfo.add(i);
+        backtrackingInfo.add(j);
+        return backtrackingInfo;
     }
 
     private boolean[] getOuterConstraints(int i, int j) {
@@ -185,30 +226,55 @@ public class MazeBoard {
 
         switch (randomBlockSwitch) {
             case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
                 randomBlockConstraints = Constraints.rotateBlock(
                         Constraints.DEAD_BLOCK, randomRotation);
                 this.blockArray[i][j] = new DeadBlock(
                         this.gamePane, j, i, randomRotation);
                 break;
-            case 1:
+            case 10:
+            case 11:
+            case 12:
+            case 13:
+            case 14:
+            case 15:
+            case 16:
                 randomBlockConstraints = Constraints.rotateBlock(
                         Constraints.AYE_BLOCK, randomRotation);
                 this.blockArray[i][j] = new AyeBlock(
                         this.gamePane, j, i, randomRotation);
                 break;
-            case 2:
+            case 17:
+            case 18:
+            case 19:
+            case 20:
+            case 21:
+            case 22:
+            case 23:
                 randomBlockConstraints = Constraints.rotateBlock(
                         Constraints.ELL_BLOCK, randomRotation);
                 this.blockArray[i][j] = new EllBlock(
                         this.gamePane, j, i, randomRotation);
                 break;
-            case 3:
+            case 24:
+            case 25:
+            case 26:
+            case 27:
+            case 28:
                 randomBlockConstraints = Constraints.rotateBlock(
                         Constraints.TEE_BLOCK, randomRotation);
                 this.blockArray[i][j] = new TeeBlock(
                         this.gamePane, j, i, randomRotation);
                 break;
-            case 4:
+            case 29:
                 randomBlockConstraints = Constraints.rotateBlock(
                         Constraints.PLUS_BLOCK, randomRotation);
                 this.blockArray[i][j] = new PlusBlock(
@@ -222,12 +288,16 @@ public class MazeBoard {
     }
 
     private boolean checkConstraintsMatch(boolean[] outerConstraints,
-                                       boolean[] innerConstraints) {
+                                       boolean[] innerConstraints, boolean isLast) {
         boolean constraintsMatch = true;
-        for (int i = 0; i < 4; i++) {
-            if (outerConstraints[i] && !innerConstraints[i]) {
-                constraintsMatch = false;
-            }
+        if (outerConstraints[0] && !innerConstraints[0]) {
+            constraintsMatch = false;
+        }
+        if (outerConstraints[3] && !innerConstraints[3]) {
+            constraintsMatch = false;
+        }
+        if (isLast && outerConstraints[1] && !innerConstraints[1]) {
+            constraintsMatch = false;
         }
         return constraintsMatch;
     }
@@ -245,49 +315,20 @@ public class MazeBoard {
      * @return
      */
     private boolean getIsXWay(int blArrRow, int blArrCol, int tlArrRow, int tlArrCol) {
+
+        if (blArrRow < 0) {
+            throw new IllegalStateException("Block Array Row is " + blArrRow);
+        }
+        if (blArrCol < 0) {
+            throw new IllegalStateException("Block Array Column is " + blArrCol);
+        }
+
         if (this.blockArray[blArrRow][blArrCol] != null) {
             return !this.blockArray[blArrRow][blArrCol].getTileArray()[tlArrRow][tlArrCol].getIsWall();
         } else {
             return false;
         }
     }
-
-
-    /*
-    method to fill the maze graphically
-        iteratively goes thru blockArray
-            at each iteration, it looks at the four center-edge tiles in the
-            blocks surrounding it (eg. MazeTile at [1, 2] in the MazeBlock
-            above it, etc) IF the blocks have been instantiated. Checks whether
-            these four tiles are walls or ways.
-                stores these constraints in a local arraylist of enums (maxsize 4)
-                //if the current block is at a border (ie. index = 0/max), add that constraint too
-
-
-            (processes these constraints and either
-                generates a new tile
-                or goes back to the previous one (if impossible))
-
-            if both are walls
-                (can have L (1) or dead ends (2 each))
-                calls set up L-block, and passes in rotation (enum) as arg
-            if one is a wall
-                (can have L (2), dead ends (3 each), path (1), or T (1))
-                same as above
-            if neither is a wall
-                (all orientations of anything are possible)
-                same as above
-     */
-
-    /*
-    {method to process enumArraylist
-        //case it and return two values: the case TYPE and ORIENTATION
-        if enumArrayList.length = 0
-            return no constraints + any orientation
-        if enumArrayList.length = 1
-            if enumArrayList.get(0) = UP
-                return}
-     */
 
 
 

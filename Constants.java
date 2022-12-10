@@ -5,7 +5,6 @@ import javafx.scene.paint.Color;
 public class Constants {
 
 
-    static final boolean[] TEE_BLOCK = {true, true, false, true};
 
 
 

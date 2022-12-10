@@ -9,8 +9,6 @@ public abstract class MazeBlock {
     private final Pane gamePane;
     private final MazeTile[][] tileArray;
 
-    //private (uninstantiated) array storing the constraints' information
-
     public MazeBlock(Pane gamePane, int xIndex, int yIndex) {
         this.gamePane = gamePane;
         this.tileArray = new MazeTile[3][3];
@@ -19,12 +17,19 @@ public abstract class MazeBlock {
     }
 
 
-    //public abstract boolean[] getConstraints(int rotateNumber);
-
-
+    /**
+     * Helper method to rotate the block by multiples of 90 degrees
+     * <p>
+     * When rotating a block, the centre and the corner tiles stay the
+     * same (all walls). It's just the ones in-between corners that are
+     * changed. This method rotates these tiles clockwise, by setting
+     * each to the value of the tile one rotation 'behind' it. This
+     * method's also got a loop that iterates for the number of rotations.
+     * @param rotateNum The number of times the block should be rotated
+     */
     public void rotateBlock(int rotateNum) {
 
-        int rotateBy = rotateNum % 4;
+        int rotateBy = rotateNum % 4; //to correct potential bad input
 
         for (int i = 0; i < rotateBy; i++) {
             boolean tileA = this.tileArray[0][1].getIsWall();
@@ -40,13 +45,21 @@ public abstract class MazeBlock {
     }
 
     /**
-     * Logically sets up the Tile Array for all subclasses
+     * Logically and graphically sets up the Tile Array for all
+     * subclasses. It first lays all nine tiles out at the same
+     * position (top left corner). Then, it moves each tile either
+     * right or down, proportional to the tile's postion in the 3x3
+     * tile array.
      * oh lawd bless that sweet sweet polymorphism
+     * @param xIndex x-index of this tile in the board's blockArray
+     * @param yIndex y-index of this tile in the board's blockArray
      */
     private void setupTileArray(int xIndex, int yIndex) {
 
-//        these variables store the coordinates of the (top left point
-//        of this) maze block.
+        /*
+        these variables store the coordinates of the (top left point
+        of this) maze block.
+         */
         int xPos = xIndex*Constants.TILE_SIZE*3 + Constants.TILE_SIZE;
         int yPos = yIndex*Constants.TILE_SIZE*3 + Constants.TILE_SIZE;
 
@@ -64,7 +77,7 @@ public abstract class MazeBlock {
     }
 
     /**
-     * Accessor method for the subclasses to access the tile array
+     * Accessor method for the subclasses to get the tile array
      * @return
      */
     public MazeTile[][] getTileArray() {

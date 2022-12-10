@@ -19,7 +19,7 @@ public class MazeBoard {
 
 
         this.setupBorder();
-        this.setupFirstBlock(); // so that pacman spawns at the same place
+        this.setupFirstBlock();
         this.setupExit();
         this.setupMaze();
 
@@ -27,9 +27,6 @@ public class MazeBoard {
         //add pacman
         //this.addPellets
     }
-
-
-
 
 
     /**
@@ -72,13 +69,46 @@ public class MazeBoard {
                         Constants.NUM_ROWS-1, 0);
     }
 
+    /**
+     * Sets up the same first block in the top left corner, ensuring that
+     * pacman has a valid tile to spawn at every time
+     */
     private void setupFirstBlock() {
         this.blockArray[0][0] = new EllBlock(this.gamePane, 0, 0, 1);
     }
 
+    /**
+     * Hoooo boy, buckle up; this is a spiiicy fuckin method. it's also
+     * almost entirely deranged (like me). but at least it works (unlike me)
+     * here's a brief, high-level overview of what it does. I'll be delving
+     * into the details w helper-method-header & in-line comments.
+     * <p>
+     * In super broad strokes – this alg iterates over each 'slot' in the
+     * MazeBoard (going left-to-right & top-to-bottom, in that order) and
+     * semi-randomly generates a block at that slot.
+     * <p>
+     * In slightly narrower strokes, here's how it does that. The alg can
+     * be explained in two parts:
+     * A) At each iteration, the alg first checks if it needs to regenerate
+     * a PREVIOUS block or not. It decides that by checking current paths
+     * leading to this block. If a path exists, then regeneration is the
+     * required. If a path does not exist, then the alg will regenerate one
+     * of the blocks connected to this one. The purpose of this is to ensure
+     * that the maze is always GLOBALLY solvable.
+     * B) After an arbitrary number of backtracking iterations, we finally
+     * have a path. Now, we randomly generate one of the five possible blocks
+     * at one of their possible orientations in this current empty slot. The
+     * alg then checks if this block is logically consistent (elaborated on
+     * later) with the four surrounding it. This ensures that the maze is
+     * always LOCALLY solvable.
+     * <p>
+     * Now let's get into the actual details :)
+     */
     private void setupMaze() {
         for (int i = 0; i < Constants.NUM_ROWS; i++) {
             for (int j = 0; j < Constants.NUM_COLS; j++) {
+
+                //TODO remove error detecting print lines
 
                 //ensures we don't replace the first or last block
                 if ((i == 0 && j == 0) || (i == Constants.NUM_ROWS - 1 &&
@@ -86,31 +116,62 @@ public class MazeBoard {
                     continue;
                 }
 
-                int randomBlockSwitch = (int) Math.floor(Math.random()*30);
-                int randomRotation = (int) Math.floor(Math.random()*4);
+//                System.out.println(String.format("Currently iterating through " +
+//                        "block [%s, %s] \r\n " +
+//                        "random block: %s \r\n" +
+//                        "random rotation: %s",
+//                        i, j, randomBlockSwitch, randomRotation));
 
-                System.out.println(String.format("Currently iterating through block [%s, %s] \r\n" +
-                        "random block: %s \r\n" +
-                        "random rotation: %s", i, j, randomBlockSwitch, randomRotation));
-
+                /*
+                This next bit checks backtracking based on the outer constraints.
+                The helper method returns an arraylist, whose first item is a
+                boolean stating whether backtracking is required or not.
+                If backtracking is required, the arraylist contains two more
+                pieces of information – the value of i and j. This changes the
+                loop's iterator info, and goes to the block that's gotta be
+                regenerated.
+                Note: this block will always be behind the current one (either
+                up or to the left), so the loop's gonna slowly come back round,
+                regenerating every block on the way.
+                 */
                 boolean[] outerConstraints = this.getOuterConstraints(i, j);
-                boolean[] innerConstraints = this.tryRandomBlock(i, j,
-                        randomBlockSwitch, randomRotation);
-
-                ArrayList<Object> backtrackingInfo = this.checkBacktracking(outerConstraints, i, j);
+                ArrayList<Object> backtrackingInfo =
+                        this.checkBacktracking(outerConstraints, i, j);
                 if ((boolean) backtrackingInfo.get(0)) {
                     i = (int) backtrackingInfo.get(1);
                     j = (int) backtrackingInfo.get(2);
+
+                    //ensures we immediately backtrack & don't execute further code
                     continue;
                 }
 
+                boolean[] innerConstraints = this.tryRandomBlock(i, j);
+
+                /*
+                The next bit of code is used to store whether the current block
+                being generated is the last possible one.
+                This is passed into checkConstraintsMatch to deal with an edge
+                case. It def feels kinda gimmicky, but I couldn't think of a
+                much cleaner way around this.
+                 */
                 boolean isLast = false;
                 if (i == Constants.NUM_ROWS - 1 && j == Constants.NUM_COLS - 2) {
                     isLast = true;
                 }
+
+                /*
+                If the current block is not logically consistent with the ones
+                surrounding it (determined by checkConstraintsMatch, then this
+                code is executed. j (and maybe i) are decremented, so this loop
+                merely runs again, generating another random block for this
+                same slot in the board. Again, this is run an arbitrary number of
+                times till a block fits.
+                If a block is consistent, the code does nothing, and moves on
+                to the next slot in the board.
+                 */
                 if (!checkConstraintsMatch(
                         outerConstraints, innerConstraints, isLast)) {
-                    System.out.println("lol chutiya, try again \r\n");
+//                    System.out.println("lol chutiya, try again \r\n");
                     if (j == 0) {
                         j = Constants.NUM_COLS - 1;
                         i--;
@@ -118,11 +179,76 @@ public class MazeBoard {
                         j--;
                     }
                 } else {
-                    System.out.println("block gen successful \r\n");
+//                    System.out.println("block gen successful \r\n");
                 }
             }
         }
     }
+
+    /**
+     * Helper method that returns a boolean array of four 'outer' constraints
+     * for a certain block. Outer constraints contain info about whether the
+     * four blocks surrounding this one have 'paths leading to it'.
+     * <p>
+     * Eg. whether the tile at [2, 1] (bottom-centre) for the block above it
+     * is a path or wall. same for the tile at [1, 2] (right-centre) for the
+     * block to the left of it. likewise for the other two blocks.
+     * <p>
+     * If there is a path in one of these directions, the constraint for that
+     * direction is set to true. If the path doesn't exist, or the block isn't
+     * yet generated, then the constraint is false (by default). The constraint
+     * for the block above, is the first one in the array (ie. outerConstraints[0]).
+     * The others are stored in clockwise ordinality.
+     * @param i row index of the current block
+     * @param j column index of the current block
+     * @return array of four boolean constraints
+     */
+    private boolean[] getOuterConstraints(int i, int j) {
+
+        boolean[] externalConstraints = new boolean[4];
+        for (int k = 0; k < 4; k++) {
+            externalConstraints[k] = false;
+        }
+
+        //checks for constraints above and below the block
+        if (i == 0) {
+            if (this.getIsXWay(i + 1, j, 0, 1)) {
+                externalConstraints[2] = true;
+            }
+        } else if (i == (Constants.NUM_ROWS - 1)) {
+            if (this.getIsXWay(i - 1, j, 2, 1)) {
+                externalConstraints[0] = true;
+            }
+        } else {
+            if (this.getIsXWay(i + 1, j, 0, 1)) {
+                externalConstraints[2] = true;
+            }
+            if (this.getIsXWay(i - 1, j, 2, 1)) {
+                externalConstraints[0] = true;
+            }
+        }
+
+        //checks for constraints to the left and right of the block
+        if (j == 0) {
+            if (this.getIsXWay(i, j + 1, 1, 0)) {
+                externalConstraints[1] = true;
+            }
+        } else if (j == (Constants.NUM_COLS - 1)) {
+            if (this.getIsXWay(i, j - 1, 1, 2)) {
+                externalConstraints[3] = true;
+            }
+        } else {
+            if (this.getIsXWay(i, j + 1, 1, 0)) {
+                externalConstraints[1] = true;
+            }
+            if (this.getIsXWay(i, j - 1, 1, 2)) {
+                externalConstraints[3] = true;
+            }
+        }
+
+        return externalConstraints;
+    }
+
 
     private ArrayList<Object> checkBacktracking(boolean[] outerConstraints, int i, int j) {
 
@@ -174,54 +300,11 @@ public class MazeBoard {
         return backtrackingInfo;
     }
 
-    private boolean[] getOuterConstraints(int i, int j) {
+    private boolean[] tryRandomBlock(int i, int j) {
 
-        boolean[] externalConstraints = new boolean[4];
-        for (int k = 0; k < 4; k++) {
-            externalConstraints[k] = false;
-        }
+        int randomBlockSwitch = (int) Math.floor(Math.random()*30);
+        int randomRotation = (int) Math.floor(Math.random()*4);
 
-        //checks for constraints above and below the block
-        if (i == 0) {
-            if (this.getIsXWay(i + 1, j, 0, 1)) {
-                externalConstraints[2] = true;
-            }
-        } else if (i == (Constants.NUM_ROWS - 1)) {
-            if (this.getIsXWay(i - 1, j, 2, 1)) {
-                externalConstraints[0] = true;
-            }
-        } else {
-            if (this.getIsXWay(i + 1, j, 0, 1)) {
-                externalConstraints[2] = true;
-            }
-            if (this.getIsXWay(i - 1, j, 2, 1)) {
-                externalConstraints[0] = true;
-            }
-        }
-
-        //checks for constraints to the left and right of the block
-        if (j == 0) {
-            if (this.getIsXWay(i, j + 1, 1, 0)) {
-                externalConstraints[1] = true;
-            }
-        } else if (j == (Constants.NUM_COLS - 1)) {
-            if (this.getIsXWay(i, j - 1, 1, 2)) {
-                externalConstraints[3] = true;
-            }
-        } else {
-            if (this.getIsXWay(i, j + 1, 1, 0)) {
-                externalConstraints[1] = true;
-            }
-            if (this.getIsXWay(i, j - 1, 1, 2)) {
-                externalConstraints[3] = true;
-            }
-        }
-
-        return externalConstraints;
-    }
-
-    private boolean[] tryRandomBlock(int i, int j, int randomBlockSwitch,
-                                     int randomRotation) {
         boolean[] randomBlockConstraints;
 
         switch (randomBlockSwitch) {

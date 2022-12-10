@@ -1,11 +1,7 @@
 
 TODO
-    implement backtracking for the maze
-        Add a 'dud' block if the maze is too easy?
     add pacman graphically
     sort pacman's movement
-    add ghost graphically
-    implement bfs
 
 
 
@@ -31,8 +27,11 @@ design choices
     note: when initializing a block, j and i are switched cuz i'm first setting xPos
     THEN setting yPos. however, the row-major representation has that the other way round.
 
+    talk about outer and inner constraints
 
-TEMP error at
-    [1, 2]
-    [2, 0]
-    [2, 2]
+    defend my choosing of arraylist of generic type object
+
+    random generation method pretty inefficient ngl. not sure what a better way could be?
+
+    'running an arbitrary number of times till it works' logic is necessary for the random
+    element. However, it also has atrocious time complexity.

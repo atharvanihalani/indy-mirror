@@ -1,9 +1,15 @@
 
 TODO
-    add pacman graphically
-    sort pacman's movement
-
-
+    figure pacman's movement
+    add ghost
+    give ghost random motion
+    add timer
+    implement stack for backtracking
+    have a couple diff end screens
+    maze visibility
+    pacman mouth moving
+    home screen to show instructions + select maze size (affects timer & num of ghosts)
+    tweak maze generation so that row 0 and col 0 aren't all fully connected
 
     add konami code easter egg??
 

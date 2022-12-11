@@ -1,33 +1,38 @@
 package indy;
 
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class MazeBoard {
 
     private Pane gamePane;
     private MazeBlock[][] blockArray;
+    private Pacman pacman;
+    private boolean implementBacktracking;
     private Pellet[][] pelletArray; //note: this will have MANY empty spots
 
     public MazeBoard(Pane gamePane) {
         this.gamePane = gamePane;
         this.blockArray = new MazeBlock[Constants.NUM_ROWS][Constants.NUM_COLS];
-        //instantiate pelletArray with dimensions tileNum * tileNum
-
+        this.implementBacktracking = false;
+        //instantiate pelletArray with dimensions tileNum * tileNu
 
         this.setupBorder();
         this.setupFirstBlock();
         this.setupExit();
         this.setupMaze();
 
-        new Pacman(this.gamePane);
-        //add pacman
+        this.pacman = new Pacman(this.gamePane, this);
+
         //this.addPellets
     }
 
+    public void keyHandler(KeyCode keyCode) {
+        this.pacman.keyHandler(keyCode);
+    }
 
     /**
      * Method that graphically sets up the borders surrounding the maze
@@ -75,6 +80,7 @@ public class MazeBoard {
      */
     private void setupFirstBlock() {
         this.blockArray[0][0] = new EllBlock(this.gamePane, 0, 0, 1);
+
     }
 
     /**
@@ -105,6 +111,7 @@ public class MazeBoard {
      * Now let's get into the actual details :)
      */
     private void setupMaze() {
+
         for (int i = 0; i < Constants.NUM_ROWS; i++) {
             for (int j = 0; j < Constants.NUM_COLS; j++) {
 
@@ -261,8 +268,7 @@ public class MazeBoard {
 
         backtrackingInfo.add(backtrack);
 
-
-        System.out.println("backtracking? " + backtrack);
+        //System.out.println("backtracking? " + backtrack);
 
         boolean whereToBacktrack = true;
         switch ((int) Math.floor(Math.random()*2)) {
@@ -271,7 +277,7 @@ public class MazeBoard {
                 whereToBacktrack = false;
         }
 
-        System.out.println("backtracking to: " + whereToBacktrack);
+        //System.out.println("backtracking to: " + whereToBacktrack);
 
         if (backtrack) {
             if (j == 0) {
@@ -397,7 +403,7 @@ public class MazeBoard {
      * @param tlArrCol tile array column index
      * @return
      */
-    private boolean getIsXWay(int blArrRow, int blArrCol, int tlArrRow, int tlArrCol) {
+    public boolean getIsXWay(int blArrRow, int blArrCol, int tlArrRow, int tlArrCol) {
 
         if (blArrRow < 0) {
             throw new IllegalStateException("Block Array Row is " + blArrRow);

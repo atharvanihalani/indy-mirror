@@ -21,31 +21,31 @@ public class IndyGame {
     }
 
 
+    /**
+     * Method called to set up the timelines, configure key input
+     * and start the game.
+     * note: I have two timelines because both keyframes are repeated
+     * at different intervals
+     */
     private void startGame() {
         this.gamePane.setFocusTraversable(true);
         this.gamePane.setOnKeyPressed((KeyEvent event) ->
                 this.mazeBoard.keyHandler(event.getCode()));
 
-        KeyFrame gameFrame = new KeyFrame(Duration.millis(4),
-                (ActionEvent event) -> {this.updateGame();});
-
+        KeyFrame gameFrame = new KeyFrame(Duration.millis(1),
+                (ActionEvent event) -> this.updateGame());
         Timeline gameTimeline = new Timeline(gameFrame);
         gameTimeline.setCycleCount(Animation.INDEFINITE);
         gameTimeline.play();
-
-
-        //I'm having two timelines because both keyframes update at
-        //different rates
+        
         KeyFrame timerFrame = new KeyFrame(Duration.seconds(1),
-                (ActionEvent event) -> {this.updateTimer();});
-
+                (ActionEvent event) -> this.updateTimer());
         Timeline timerTimeline = new Timeline(timerFrame);
         timerTimeline.setCycleCount(Animation.INDEFINITE);
         timerTimeline.play();
     }
 
     private void updateGame() {
-        System.out.println("update game");
         this.mazeBoard.updateBoard();
     }
 
@@ -57,8 +57,6 @@ public class IndyGame {
     method for timer countdown
      */
 
-    /*
-    method for scoretracking????
-     */
+
 
 }

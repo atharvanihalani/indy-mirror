@@ -12,13 +12,11 @@ public class MazeBoard {
     private MazeBlock[][] blockArray;
     private Pacman pacman;
     private boolean implementBacktracking;
-    private Pellet[][] pelletArray; //note: this will have MANY empty spots
 
     public MazeBoard(Pane gamePane) {
         this.gamePane = gamePane;
         this.blockArray = new MazeBlock[Constants.NUM_ROWS][Constants.NUM_COLS];
         this.implementBacktracking = false;
-        //instantiate pelletArray with dimensions tileNum * tileNu
 
         this.setupBorder();
         this.setupFirstBlock();
@@ -26,8 +24,6 @@ public class MazeBoard {
         this.setupMaze();
 
         this.pacman = new Pacman(this.gamePane, this);
-
-        //this.addPellets
     }
 
     public void keyHandler(KeyCode keyCode) {
@@ -423,31 +419,5 @@ public class MazeBoard {
     public void updateBoard() {
         this.pacman.updatePacman();
     }
-
-
-    /*
-    method to add the pellets to the maze
-        iterates through the blockArray
-            iterates through the tileArray
-                if !isTileWall then
-                    add pellet to pelletArray
-                    add pellet graphically to maze (helper)
-     */
-
-    /*
-    method to remove a pellet from the maze
-        //takes in pelletArray coordinates as arg
-            call helper method to remove it graphically
-            remove it from array
-     */
-
-    /*
-    method to check if pacman is colliding w a pellet
-        myPacman.getPos()
-        //pass this into pellet array
-        if pelletArray[_][_] != null
-            this.removePelletAt([][])
-     */
-
 
 }

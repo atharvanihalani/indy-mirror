@@ -28,11 +28,9 @@ public class Pacman {
         this.standardRotate = new Rotate(90, 0, 8);
 
         this.setupPac();
-        //this.move(Direction.RIGHT);
     }
 
     public void updatePacman() {
-//        System.out.println(this.checkMotionValidity(this.currentDirection));
         if (this.checkMotionValidity(this.currentDirection)) {
             this.pacMover(this.currentDirection);
         }
@@ -116,9 +114,13 @@ public class Pacman {
         //ensures the index is always within bounds
         if (arraysIndex[0] >= Constants.NUM_COLS) {
             arraysIndex[0] = Constants.NUM_COLS - 1;
+        } else if (arraysIndex[0] < 0) {
+            arraysIndex[0] = 0;
         }
         if (arraysIndex[1] >= Constants.NUM_ROWS) {
             arraysIndex[1] = Constants.NUM_ROWS - 1;
+        } else if (arraysIndex[1] < 0) {
+            arraysIndex[1] = 0;
         }
 
         double tempXVar = (coords[0] - Constants.TILE_SIZE) % (Constants.TILE_SIZE*3);
@@ -133,7 +135,6 @@ public class Pacman {
 
 
     public void keyHandler(KeyCode keyCode) {
-
         switch (keyCode) {
             case RIGHT:
                 this.moveLogic(Direction.RIGHT);
@@ -151,8 +152,6 @@ public class Pacman {
                 //backtracking with stack
                 break;
         }
-
-
     }
 
 
@@ -163,6 +162,13 @@ public class Pacman {
             this.currentDirection = newDirection;
         } else {
 
+            if (this.checkMotionValidity(newDirection)) {
+                this.currentDirection = newDirection;
+            } else {
+                this.moveLogic(newDirection);
+            }
+
+
             /*
             check motion validity for newDir
             if motion is valid (note: only when pacman is stationary)
@@ -170,7 +176,15 @@ public class Pacman {
             if motion is not valid
                this.keepCheckingValidity(newDir)
                if it's ever true, call this.move(newDir) AFTER pacman has moved 12.5 steps further
-               it should also reset if ANY arrow key is pressed
+             */
+
+
+            /*
+            TODO
+                don't let paccy noclip thru the borders
+                glitch where paccy turns into a wall while moving and bugs out for a sec (think its
+                    the same as the occasional stack overflow overflowing terminal)
+                ensure that paccy can only turn perpendicularly when at center of the border
              */
         }
     }
@@ -192,9 +206,13 @@ public class Pacman {
                 break;
             case UP:
                 System.out.println("move up");
+                this.pacMouth.setLayoutY(this.pacMouth.getLayoutY() - 0.05);
+                this.pacCircle.setCenterY(this.pacCircle.getCenterY() - 0.05);
                 break;
             case DOWN:
                 System.out.println("move down");
+                this.pacMouth.setLayoutY(this.pacMouth.getLayoutY() + 0.05);
+                this.pacCircle.setCenterY(this.pacCircle.getCenterY() + 0.05);
                 break;
         }
 
@@ -225,31 +243,6 @@ public class Pacman {
     }
 
 
-    /*
-    method that checks motion validity
-        takes in an enum param for one of the four directions
 
-        checks if the center of pacCircle is x units away from a wall
-
-        this should
-        a) stop pacman from moving in a direction it's impossible to move in
-        b) stop pacman from colliding into a wall
-     */
-
-
-
-    /*
-    method to move pacman (copy-paste from cartoon)
-        continuously checks if it's colliding with a wall (timeline updated every moment)
-            if no, continue moving in same direction
-            if yes, move a tiny bit away, and stop
-     */
-
-
-
-    /*
-    helper method to rotate pacman
-        called when moving in a diff direction
-     */
 
 }

@@ -5,6 +5,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
+import javafx.scene.transform.Rotate;
+
+import java.util.Arrays;
 
 public class Pacman {
 
@@ -13,41 +16,63 @@ public class Pacman {
     private Pane gamePane;
     private MazeBoard mazeBoard;
     private Direction currentDirection;
+    private Direction intendedDirection;
+    private Rotate standardRotate;
     public Pacman(Pane gamePane, MazeBoard mazeBoard) {
         this.pacCircle = new Circle(12, Color.YELLOW);
         this.pacMouth = new Polygon();
         this.gamePane = gamePane;
         this.mazeBoard = mazeBoard;
         this.currentDirection = Direction.RIGHT;
+        this.intendedDirection = null;
+        this.standardRotate = new Rotate(90, 0, 8);
 
         this.setupPac();
         //this.move(Direction.RIGHT);
+    }
 
-
+    public void updatePacman() {
+//        System.out.println(this.checkMotionValidity(this.currentDirection));
+        if (this.checkMotionValidity(this.currentDirection)) {
+            this.pacMover(this.currentDirection);
+        }
     }
 
     private void setupPac() {
         double openMouth = 5.0;
         //TODO make these constants
 
-        this.pacMouth.getPoints().addAll(15.0, 10-openMouth,
-                15.0, 10+openMouth,
-                0.0, 10.0);
-        this.pacMouth.setFill(Color.BLACK);
+        this.pacMouth.getPoints().addAll(12.0, 8-openMouth,
+                12.0, 8+openMouth,
+                0.0, 8.0);
+        this.pacMouth.setFill(Color.GREEN);
 
         this.gamePane.getChildren().addAll(pacCircle, pacMouth);
 
         this.pacCircle.setCenterX(Constants.TILE_SIZE*2.5); //TODO tweak these
         this.pacCircle.setCenterY(Constants.TILE_SIZE*2.5);
         this.pacMouth.setLayoutX(Constants.TILE_SIZE*2.5);
-        this.pacMouth.setLayoutY(Constants.TILE_SIZE*2.5 - 10);
+        this.pacMouth.setLayoutY(Constants.TILE_SIZE*2.5 - 8);
     }
 
+    /**
+     * This method checks whether motion is possible in a given
+     * direction. ie. whether the tile ahead/behind/above/below
+     * pacman is a wall or not.
+     * @param direction the direction for which motion validity
+     *                  will be checked
+     * @return indicates whether motion is possible or not
+     */
     private boolean checkMotionValidity(Direction direction) {
         double[] pacCoords = new double[2];
         pacCoords[0] = this.pacCircle.getCenterX();
         pacCoords[1] = this.pacCircle.getCenterY();
 
+        /*
+        increments coords in the direction of motion in order to get
+        the coordinates of a specific tile T. We're then checking if
+        T is a wall or not
+         */
         switch (direction) {
             case RIGHT:
                 pacCoords[0] = pacCoords[0] + Constants.TILE_SIZE/2.0;
@@ -63,114 +88,142 @@ public class Pacman {
                 break;
         }
 
+        System.out.println(Arrays.toString(pacCoords));
+
         int[] arrayIndex = this.checkPosInArray(pacCoords);
-        return this.mazeBoard.getIsXWay(arrayIndex[1], arrayIndex[0],
-                arrayIndex[3], arrayIndex[2]);
+        return this.mazeBoard.getIsXWay(arrayIndex[0], arrayIndex[1],
+                arrayIndex[2], arrayIndex[3]);
     }
 
+    /**
+     * Helper method that takes in a pair of coordinates, and returns the
+     * corresponding index in the nested 2D array.
+     * @param coords array of size 2 with the coordinates of a certain
+     *               point (x, y)
+     * @return an integer array of size 4 with the ordered indexes of
+     * both 2d arrays. note the y index is calculated first because the
+     * 2d arrays are in row-major order
+     */
     private int[] checkPosInArray(double[] coords) {
+
+        //external (block) array coordinates
         int[] arraysIndex = new int[4];
-        arraysIndex[0] = (int) Math.floor((coords[0] - Constants.TILE_SIZE) /
+        arraysIndex[0] = (int) Math.floor((coords[1] - Constants.TILE_SIZE) /
                 (Constants.TILE_SIZE*3));
-        arraysIndex[1] = (int) Math.floor((coords[1] - Constants.TILE_SIZE) /
+        arraysIndex[1] = (int) Math.floor((coords[0] - Constants.TILE_SIZE) /
                 (Constants.TILE_SIZE*3));
+
+        //ensures the index is always within bounds
+        if (arraysIndex[0] >= Constants.NUM_COLS) {
+            arraysIndex[0] = Constants.NUM_COLS - 1;
+        }
+        if (arraysIndex[1] >= Constants.NUM_ROWS) {
+            arraysIndex[1] = Constants.NUM_ROWS - 1;
+        }
 
         double tempXVar = (coords[0] - Constants.TILE_SIZE) % (Constants.TILE_SIZE*3);
         double tempYVar = (coords[1] - Constants.TILE_SIZE) % (Constants.TILE_SIZE*3);
 
-        arraysIndex[2] = (int) Math.floor(tempXVar / Constants.TILE_SIZE);
-        arraysIndex[3] = (int) Math.floor(tempYVar / Constants.TILE_SIZE);
+        //internal (tile) array coordinates
+        arraysIndex[2] = (int) Math.floor(tempYVar / Constants.TILE_SIZE);
+        arraysIndex[3] = (int) Math.floor(tempXVar / Constants.TILE_SIZE);
 
         return arraysIndex;
     }
 
-    /*
-    helper method to return pacman's position in the array
-        gets pacman's current x and y pos
-        uses that to find out the current position in NESTED 2d array
-            divide by blocksize (& floor) to calc outer array coordinates
-            calc mod when dividing by blocksize, THEN divide by tilesize (& floor) to calc nested array coords.
-     */
-
 
     public void keyHandler(KeyCode keyCode) {
+
         switch (keyCode) {
             case RIGHT:
-                System.out.println("move right");
-                //move right
-                /*
-                if the direction is the same as the current direction
-                of motion, do nothing (instance var)
-
-                if the direction is opposite to the current direction
-                of motion, directly turn around and move + update
-                this.currentMotion
-
-                else, check motion validity (by checking distance bw
-                pac & wall)
-                    if valid, move + update this.currentMotion
-                    if not valid, constantly call validity checker until
-                    it ends up valid (direction one is checking for should
-                    also be stored in an instance variable, so there is only
-                    ever one dir at any point)
-                 */
+                this.moveLogic(Direction.RIGHT);
                 break;
             case LEFT:
-                //move left
+                this.moveLogic(Direction.LEFT);
                 break;
             case UP:
-                //move up
+                this.moveLogic(Direction.UP);
                 break;
             case DOWN:
-                //move down
+                this.moveLogic(Direction.DOWN);
                 break;
             case SPACE:
                 //backtracking with stack
                 break;
         }
+
+
     }
 
 
-
-    public void moveLogic(Direction newDirection) {
+    private void moveLogic(Direction newDirection) {
         if (newDirection == this.currentDirection) {
             //exit method
         } else if (newDirection.getOpposite() == this.currentDirection) {
-            //this.move(newDir) + set current direction to new one TODO write method
+            this.currentDirection = newDirection;
         } else {
+
             /*
             check motion validity for newDir
             if motion is valid (note: only when pacman is stationary)
                 this.move(newDir) + this.currentDir = newDir;
             if motion is not valid
-               this.keepCheckingValidity(newDir) TODO make this helper
-               if it's ever true, call this.move(newDir)
+               this.keepCheckingValidity(newDir)
+               if it's ever true, call this.move(newDir) AFTER pacman has moved 12.5 steps further
                it should also reset if ANY arrow key is pressed
              */
         }
     }
 
-    /*
-    TODO make the move method such that it's constantly called for the
-        direction pacman is currently facing
+    private void pacMover(Direction direction) {
+        this.intendedDirection = null;
+        this.rotatePac(direction);
 
-    generic move method accepting enum arg for direction
-        if newDir == this.currentDir
-            break;
-        if newDir.getOpposite == this.currentDir
-            this.move(newDir) TODO make this helper
-            this.currentDir = newDir; (include this in the prev method)
-        else (if newDir is perpendicular to this.currentDir)
-            check motion validity for this new direction
-            if motion is valid (note: only when pacman is stationary)
-                this.move(newDir)
-                this.currentDir = newDir;
-            if motion is not valid
-               this.keepCheckingValidity(newDir) TODO make this helper
-               if it's ever true, call this.move(newDir)
-               it should also reset if ANY arrow key is pressed
+        switch (direction) {
+            case RIGHT:
+                System.out.println("move right");
+                this.pacMouth.setLayoutX(this.pacMouth.getLayoutX() + 0.05);
+                this.pacCircle.setCenterX(this.pacCircle.getCenterX() + 0.05);
+                break;
+            case LEFT:
+                System.out.println("move left");
+                this.pacMouth.setLayoutX(this.pacMouth.getLayoutX() - 0.05);
+                this.pacCircle.setCenterX(this.pacCircle.getCenterX() - 0.05);
+                break;
+            case UP:
+                System.out.println("move up");
+                break;
+            case DOWN:
+                System.out.println("move down");
+                break;
+        }
 
-     */
+    }
+
+
+    private void rotatePac(Direction direction) {
+        switch (direction) {
+            case RIGHT:
+                this.pacMouth.getTransforms().removeAll(this.standardRotate);
+                break;
+            case LEFT:
+                this.pacMouth.getTransforms().removeAll(this.standardRotate);
+                this.pacMouth.getTransforms().add(this.standardRotate);
+                this.pacMouth.getTransforms().add(this.standardRotate);
+                break;
+            case UP:
+                this.pacMouth.getTransforms().removeAll(this.standardRotate);
+                this.pacMouth.getTransforms().add(this.standardRotate);
+                this.pacMouth.getTransforms().add(this.standardRotate);
+                this.pacMouth.getTransforms().add(this.standardRotate);
+                break;
+            case DOWN:
+                this.pacMouth.getTransforms().removeAll(this.standardRotate);
+                this.pacMouth.getTransforms().add(this.standardRotate);
+                break;
+        }
+    }
+
 
     /*
     method that checks motion validity
@@ -185,7 +238,6 @@ public class Pacman {
 
 
 
-
     /*
     method to move pacman (copy-paste from cartoon)
         continuously checks if it's colliding with a wall (timeline updated every moment)
@@ -194,13 +246,6 @@ public class Pacman {
      */
 
 
-    /*
-    method to check if pacman is colliding w a wall
-        //updated continuously by timeline
-        //returns a boolean
-        this.getPos()
-        checks if the current TILE isWall or not
-     */
 
     /*
     helper method to rotate pacman

@@ -20,23 +20,33 @@ public class IndyGame {
         this.startGame();
     }
 
+
     private void startGame() {
         this.gamePane.setFocusTraversable(true);
         this.gamePane.setOnKeyPressed((KeyEvent event) ->
                 this.mazeBoard.keyHandler(event.getCode()));
 
-        KeyFrame gameFrame = new KeyFrame(Duration.seconds(1),
+        KeyFrame gameFrame = new KeyFrame(Duration.millis(4),
                 (ActionEvent event) -> {this.updateGame();});
+
+        Timeline gameTimeline = new Timeline(gameFrame);
+        gameTimeline.setCycleCount(Animation.INDEFINITE);
+        gameTimeline.play();
+
+
+        //I'm having two timelines because both keyframes update at
+        //different rates
         KeyFrame timerFrame = new KeyFrame(Duration.seconds(1),
                 (ActionEvent event) -> {this.updateTimer();});
 
-        Timeline timeline = new Timeline(gameFrame, timerFrame);
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();
+        Timeline timerTimeline = new Timeline(timerFrame);
+        timerTimeline.setCycleCount(Animation.INDEFINITE);
+        timerTimeline.play();
     }
 
     private void updateGame() {
-        //System.out.println("ur mom a hoe");
+        System.out.println("update game");
+        this.mazeBoard.updateBoard();
     }
 
     private void updateTimer() {

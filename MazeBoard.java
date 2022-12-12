@@ -420,6 +420,9 @@ public class MazeBoard {
     }
 
 
+    public void updateBoard() {
+        this.pacman.updatePacman();
+    }
 
 
     /*

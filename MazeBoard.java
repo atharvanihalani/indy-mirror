@@ -93,7 +93,7 @@ public class MazeBoard {
      * be explained in two parts:
      * A) At each iteration, the alg first checks if it needs to regenerate
      * a PREVIOUS block or not. It decides that by checking current paths
-     * leading to this block. If a path exists, then regeneration is the
+     * leading to this block. If a path exists, then regeneration isn't
      * required. If a path does not exist, then the alg will regenerate one
      * of the blocks connected to this one. The purpose of this is to ensure
      * that the maze is always GLOBALLY solvable.
@@ -140,6 +140,7 @@ public class MazeBoard {
                 boolean[] outerConstraints = this.getOuterConstraints(i, j);
                 ArrayList<Object> backtrackingInfo =
                         this.checkBacktracking(outerConstraints, i, j);
+
                 if ((boolean) backtrackingInfo.get(0)) {
                     i = (int) backtrackingInfo.get(1);
                     j = (int) backtrackingInfo.get(2);
@@ -252,48 +253,70 @@ public class MazeBoard {
         return externalConstraints;
     }
 
-
+    /**
+     * This is the second helper method for setupMaze(). It checks whether the alg
+     * should backtrack and regenerate one of the previous blocks (ie. either above
+     * or to the left) leading to the current one. If there is a connecting path on
+     * either of the previous blocks, then backtracking isn't required. If there
+     * isn't a path, then the alg randomly chooses which one to backtrack to.
+     * <p>
+     * Again, this is to ensure that the maze is globally consistent
+     *
+     * @param outerConstraints the array of outer constraints for that particular
+     *                         block
+     * @param i the row-index of the block
+     * @param j the column index of the block
+     * @return An arraylist with backtracking information. The first index has a
+     * boolean indicating whether backtracking should occur or not. If it should,
+     * it also returns the i and j values that the nested loop should return to.
+     */
     private ArrayList<Object> checkBacktracking(boolean[] outerConstraints, int i, int j) {
 
         ArrayList<Object> backtrackingInfo = new ArrayList<>();
 
-        boolean backtrack = true;
+        //if there is a connecting path on either the block above, or to
+        //the left, then backtracking isn't required
         if (outerConstraints[0] || outerConstraints[3]) {
-            backtrack = false;
+            backtrackingInfo.add(false);
+            return backtrackingInfo;
         }
+        backtrackingInfo.add(true);
 
-        backtrackingInfo.add(backtrack);
+        //System.out.println("backtracking? " + backtrackingInfo.get(0));
 
-        //System.out.println("backtracking? " + backtrack);
-
-        boolean whereToBacktrack = true;
+        //randomly chooses a direction to backtrack in
+        boolean whereToBacktrack;
         switch ((int) Math.floor(Math.random()*2)) {
             case 0:
+                whereToBacktrack = true;
+                break;
             case 1:
                 whereToBacktrack = false;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " +
+                        (int) Math.floor(Math.random() * 2));
         }
 
         //System.out.println("backtracking to: " + whereToBacktrack);
 
-        if (backtrack) {
-            if (j == 0) {
+        if (j == 0) {
+            j--;
+            i--;
+        } else if (j == 1) {
+            if (whereToBacktrack) {
+                j = Constants.NUM_COLS - 1;
+                i--;
+            } else {
                 j--;
                 i--;
-            } else if (j == 1) {
-                if (whereToBacktrack) {
-                    j = Constants.NUM_COLS - 1;
-                    i--;
-                } else {
-                    j--;
-                    i--;
-                }
+            }
+        } else {
+            if (!whereToBacktrack && i != 0) {
+                j--;
+                i--;
             } else {
-                if (!whereToBacktrack && i != 0) {
-                    j--;
-                    i--;
-                } else {
-                    j = j - 2;
-                }
+                j = j - 2;
             }
         }
 
@@ -302,11 +325,21 @@ public class MazeBoard {
         return backtrackingInfo;
     }
 
+    /**
+     * Yet another helper method for setupMaze(). This semi-randomly generates
+     * one of the five blocks and adds them to the current slot in the 2d array.
+     * It also simultaneously returns the block's constraints for that particular
+     * orientation. The blocks have a range of possibilities for being generated.
+     * This was done in order to balance gameplay, and not make the maze too easy.
+     * @param i row index of this current slot
+     * @param j column index of this current slot
+     * @return the 'inner constraints' of that particular block, at that particular
+     * orientation
+     */
     private boolean[] tryRandomBlock(int i, int j) {
 
         int randomBlockSwitch = (int) Math.floor(Math.random()*30);
         int randomRotation = (int) Math.floor(Math.random()*4);
-
         boolean[] randomBlockConstraints;
 
         switch (randomBlockSwitch) {
@@ -372,6 +405,24 @@ public class MazeBoard {
         return randomBlockConstraints;
     }
 
+    /**
+     * Nope, still not the last helper method for setupMaze(). This checks if
+     * the top & left outer constraints match with the corresponding inner
+     * constraints of the block.
+     * <p>
+     * The logic is such that, if there is an external path, there ALWAYS has
+     * to be an internal path leading to it. However, an external wall can be
+     * matched with either an internal wall OR path. Again, this ensures local
+     * solvability.
+     * @param outerConstraints self-explanatory
+     * @param innerConstraints ditto
+     * @param isLast used for an annoying edge case. The second last block in
+     *               the array has to ensure it's also connected to the block
+     *               to its right (ie. the constant exitTile). Hence this boolean
+     *               indicates whether the current block is the second-last in
+     *               the array (ie. the last one being generated).
+     * @return boolean indicating whether the constraints match
+     */
     private boolean checkConstraintsMatch(boolean[] outerConstraints,
                                        boolean[] innerConstraints, boolean isLast) {
         boolean constraintsMatch = true;
@@ -381,23 +432,25 @@ public class MazeBoard {
         if (outerConstraints[3] && !innerConstraints[3]) {
             constraintsMatch = false;
         }
+
+        //also checks constraints for the block to the right if it's the last block
         if (isLast && outerConstraints[1] && !innerConstraints[1]) {
             constraintsMatch = false;
         }
         return constraintsMatch;
     }
 
-
     /**
-     * Helper method that returns whether a specific tile in a specific block
-     * is a 'way' or not. Returns false if the block hasn't been initialized.
+     * Helper method for a helper method rip. This returns whether a specific
+     * tile in a specific block is a 'way' or not. Returns false if the block
+     * hasn't been instantiated.
      *
      * TODO better design would delegate this method to MazeBlock (low coupling)
      * @param blArrRow block array row index
      * @param blArrCol block array column index
      * @param tlArrRow tile array row index (within that specific block)
      * @param tlArrCol tile array column index
-     * @return
+     * @return boolean indicating if the tile is a path/way or a wall
      */
     public boolean getIsXWay(int blArrRow, int blArrCol, int tlArrRow, int tlArrCol) {
 
@@ -414,7 +467,6 @@ public class MazeBoard {
             return false;
         }
     }
-
 
     public void updateBoard() {
         this.pacman.updatePacman();

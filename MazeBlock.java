@@ -86,15 +86,6 @@ public abstract class MazeBlock {
 
 
 
-
-    /*
-    helper method to set up a new maze block graphically.
-        graphically sets up the tileArray to get a 3x3 block
-        randomly rotates it by any of the possible arguments
-        sets it up graphically within the MazeBoard
-     */
-
-
     /*
     method to check ifTileWall
         accepts coords of tileArray as arg

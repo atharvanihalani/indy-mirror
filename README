@@ -13,9 +13,6 @@ TODO
 
     add konami code easter egg??
 
-Questions
-    it seems super unwieldy to pass in the main gamepane to every single
-    class. am i approaching it wrong? is there a more efficient way to do it?
 
 design choices
 

@@ -89,6 +89,14 @@ public class Pacman {
         System.out.println(Arrays.toString(pacCoords));
 
         int[] arrayIndex = this.checkPosInArray(pacCoords);
+
+        //returns false if the array index is out of bounds
+        //ie. paccy doesn't noclip through the border
+        if ((arrayIndex[0] >= Constants.NUM_ROWS) || (arrayIndex[0] < 0) ||
+                (arrayIndex[1] >= Constants.NUM_COLS) || (arrayIndex[1] < 0)) {
+            return false;
+        }
+
         return this.mazeBoard.getIsXWay(arrayIndex[0], arrayIndex[1],
                 arrayIndex[2], arrayIndex[3]);
     }
@@ -110,18 +118,6 @@ public class Pacman {
                 (Constants.TILE_SIZE*3));
         arraysIndex[1] = (int) Math.floor((coords[0] - Constants.TILE_SIZE) /
                 (Constants.TILE_SIZE*3));
-
-        //ensures the index is always within bounds
-        if (arraysIndex[0] >= Constants.NUM_COLS) {
-            arraysIndex[0] = Constants.NUM_COLS - 1;
-        } else if (arraysIndex[0] < 0) {
-            arraysIndex[0] = 0;
-        }
-        if (arraysIndex[1] >= Constants.NUM_ROWS) {
-            arraysIndex[1] = Constants.NUM_ROWS - 1;
-        } else if (arraysIndex[1] < 0) {
-            arraysIndex[1] = 0;
-        }
 
         double tempXVar = (coords[0] - Constants.TILE_SIZE) % (Constants.TILE_SIZE*3);
         double tempYVar = (coords[1] - Constants.TILE_SIZE) % (Constants.TILE_SIZE*3);
@@ -181,7 +177,6 @@ public class Pacman {
 
             /*
             TODO
-                don't let paccy noclip thru the borders
                 glitch where paccy turns into a wall while moving and bugs out for a sec (think its
                     the same as the occasional stack overflow overflowing terminal)
                 ensure that paccy can only turn perpendicularly when at center of the border

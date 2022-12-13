@@ -1,11 +1,10 @@
 
 TODO
-    figure movement glitches
+    have a couple diff end screens
     add ghost
     give ghost random motion
+    figure movement glitch
     add timer
-    implement stack for backtracking
-    have a couple diff end screens
     maze visibility
     pacman mouth moving
     home screen to show instructions + select maze size (affects timer & num of ghosts)

@@ -8,6 +8,7 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
 
 import java.util.Arrays;
+import java.util.Stack;
 
 public class Pacman {
 
@@ -18,6 +19,7 @@ public class Pacman {
     private Direction currentDirection;
     private Direction intendedDirection;
     private Rotate standardRotate;
+    private Stack<double[]> backTrackStack;
     public Pacman(Pane gamePane, MazeBoard mazeBoard) {
         this.pacCircle = new Circle(12, Color.YELLOW);
         this.pacMouth = new Polygon();
@@ -26,6 +28,7 @@ public class Pacman {
         this.currentDirection = Direction.RIGHT;
         this.intendedDirection = null;
         this.standardRotate = new Rotate(90, 0, 8);
+        this.backTrackStack = new Stack<>();
 
         this.setupPac();
     }
@@ -33,6 +36,7 @@ public class Pacman {
     public void updatePacman() {
         if (this.checkMotionValidity(this.currentDirection)) {
             this.pacMover(this.currentDirection);
+            this.checkRightAngleMoveLogic();
         }
     }
 
@@ -129,7 +133,6 @@ public class Pacman {
         return arraysIndex;
     }
 
-
     public void keyHandler(KeyCode keyCode) {
         switch (keyCode) {
             case RIGHT:
@@ -144,73 +147,95 @@ public class Pacman {
             case DOWN:
                 this.moveLogic(Direction.DOWN);
                 break;
+            case S:
+                this.packBackTrackStack();
+                break;
             case SPACE:
-                //backtracking with stack
+                this.backTrackStackSubtract();
                 break;
         }
     }
 
+    private void packBackTrackStack() {
+        double[] currentIndex = new double[2];
+        currentIndex[0] = this.pacCircle.getCenterX();
+        currentIndex[1] = this.pacCircle.getCenterY();
+        this.backTrackStack.push(currentIndex);
+    }
+
+    private void backTrackStackSubtract() {
+        if (!this.backTrackStack.empty()) {
+            double[] backTrackIndex = this.backTrackStack.pop();
+            this.pacCircle.setCenterX(backTrackIndex[0]);
+            this.pacMouth.setLayoutX(backTrackIndex[0]);
+            this.pacCircle.setCenterY(backTrackIndex[1]);
+            this.pacMouth.setLayoutY(backTrackIndex[1] - 8);
+        }
+    }
+
+    private void checkRightAngleMoveLogic() {
+        if (this.intendedDirection != null) {
+            System.out.println("checking for move");
+            if (this.checkMotionValidity(this.intendedDirection)) {
+                this.currentDirection = this.intendedDirection;
+                this.intendedDirection = null;
+            }
+        }
+    }
 
     private void moveLogic(Direction newDirection) {
         if (newDirection == this.currentDirection) {
-            //exit method
+            this.intendedDirection = null;
         } else if (newDirection.getOpposite() == this.currentDirection) {
             this.currentDirection = newDirection;
+            this.intendedDirection = null;
         } else {
-
             if (this.checkMotionValidity(newDirection)) {
                 this.currentDirection = newDirection;
+                this.intendedDirection = null;
+                System.out.println("intended direction valid");
             } else {
-                this.moveLogic(newDirection);
+                this.intendedDirection = newDirection;
+                System.out.println("intended direction invalid");
             }
 
 
             /*
-            check motion validity for newDir
-            if motion is valid (note: only when pacman is stationary)
-                this.move(newDir) + this.currentDir = newDir;
-            if motion is not valid
-               this.keepCheckingValidity(newDir)
-               if it's ever true, call this.move(newDir) AFTER pacman has moved 12.5 steps further
-             */
-
-
-            /*
             TODO
-                glitch where paccy turns into a wall while moving and bugs out for a sec (think its
-                    the same as the occasional stack overflow overflowing terminal)
                 ensure that paccy can only turn perpendicularly when at center of the border
              */
         }
     }
 
     private void pacMover(Direction direction) {
-        this.intendedDirection = null;
         this.rotatePac(direction);
 
         switch (direction) {
             case RIGHT:
-                System.out.println("move right");
-                this.pacMouth.setLayoutX(this.pacMouth.getLayoutX() + 0.05);
-                this.pacCircle.setCenterX(this.pacCircle.getCenterX() + 0.05);
+                this.pacMouth.setLayoutX(this.pacMouth.getLayoutX() +
+                        Constants.PAC_DISPLACEMENT);
+                this.pacCircle.setCenterX(this.pacCircle.getCenterX() +
+                        Constants.PAC_DISPLACEMENT);
                 break;
             case LEFT:
-                System.out.println("move left");
-                this.pacMouth.setLayoutX(this.pacMouth.getLayoutX() - 0.05);
-                this.pacCircle.setCenterX(this.pacCircle.getCenterX() - 0.05);
+                this.pacMouth.setLayoutX(this.pacMouth.getLayoutX() -
+                        Constants.PAC_DISPLACEMENT);
+                this.pacCircle.setCenterX(this.pacCircle.getCenterX() -
+                        Constants.PAC_DISPLACEMENT);
                 break;
             case UP:
-                System.out.println("move up");
-                this.pacMouth.setLayoutY(this.pacMouth.getLayoutY() - 0.05);
-                this.pacCircle.setCenterY(this.pacCircle.getCenterY() - 0.05);
+                this.pacMouth.setLayoutY(this.pacMouth.getLayoutY() -
+                        Constants.PAC_DISPLACEMENT);
+                this.pacCircle.setCenterY(this.pacCircle.getCenterY() -
+                        Constants.PAC_DISPLACEMENT);
                 break;
             case DOWN:
-                System.out.println("move down");
-                this.pacMouth.setLayoutY(this.pacMouth.getLayoutY() + 0.05);
-                this.pacCircle.setCenterY(this.pacCircle.getCenterY() + 0.05);
+                this.pacMouth.setLayoutY(this.pacMouth.getLayoutY() +
+                        Constants.PAC_DISPLACEMENT);
+                this.pacCircle.setCenterY(this.pacCircle.getCenterY() +
+                        Constants.PAC_DISPLACEMENT);
                 break;
         }
-
     }
 
 
@@ -236,8 +261,6 @@ public class Pacman {
                 break;
         }
     }
-
-
 
 
 }

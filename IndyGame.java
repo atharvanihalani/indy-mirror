@@ -32,7 +32,7 @@ public class IndyGame {
         this.gamePane.setOnKeyPressed((KeyEvent event) ->
                 this.mazeBoard.keyHandler(event.getCode()));
 
-        KeyFrame gameFrame = new KeyFrame(Duration.millis(1),
+        KeyFrame gameFrame = new KeyFrame(Constants.UPDATE_GAME_EVERY,
                 (ActionEvent event) -> this.updateGame());
         Timeline gameTimeline = new Timeline(gameFrame);
         gameTimeline.setCycleCount(Animation.INDEFINITE);

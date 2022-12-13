@@ -7,7 +7,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
 
-import java.util.Arrays;
 import java.util.Stack;
 
 public class Pacman {
@@ -21,7 +20,7 @@ public class Pacman {
     private Rotate standardRotate;
     private Stack<double[]> backTrackStack;
     public Pacman(Pane gamePane, MazeBoard mazeBoard) {
-        this.pacCircle = new Circle(12, Color.YELLOW);
+        this.pacCircle = new Circle(Constants.PAC_RAD, Color.YELLOW);
         this.pacMouth = new Polygon();
         this.gamePane = gamePane;
         this.mazeBoard = mazeBoard;
@@ -31,13 +30,6 @@ public class Pacman {
         this.backTrackStack = new Stack<>();
 
         this.setupPac();
-    }
-
-    public void updatePacman() {
-        if (this.checkMotionValidity(this.currentDirection)) {
-            this.pacMover(this.currentDirection);
-            this.checkRightAngleMoveLogic();
-        }
     }
 
     private void setupPac() {
@@ -57,6 +49,14 @@ public class Pacman {
         this.pacMouth.setLayoutY(Constants.TILE_SIZE*2.5 - 8);
     }
 
+
+    public void updatePacman() {
+        if (this.checkMotionValidity(this.currentDirection)) {
+            this.pacMover(this.currentDirection);
+            this.checkWallAtTurn();
+        }
+    }
+
     /**
      * This method checks whether motion is possible in a given
      * direction. ie. whether the tile ahead/behind/above/below
@@ -66,9 +66,11 @@ public class Pacman {
      * @return indicates whether motion is possible or not
      */
     private boolean checkMotionValidity(Direction direction) {
-        double[] pacCoords = new double[2];
-        pacCoords[0] = this.pacCircle.getCenterX();
-        pacCoords[1] = this.pacCircle.getCenterY();
+        double[] checkWallA = new double[2];
+        double[] checkWallB = new double[2];
+        checkWallA[0] = checkWallB[0] = this.pacCircle.getCenterX();
+        checkWallA[1] = checkWallB[1] = this.pacCircle.getCenterY();
+
 
         /*
         increments coords in the direction of motion in order to get
@@ -77,32 +79,86 @@ public class Pacman {
          */
         switch (direction) {
             case RIGHT:
-                pacCoords[0] = pacCoords[0] + Constants.TILE_SIZE/2.0;
+                checkWallA[0] = checkWallB[0] = checkWallA[0] + Constants.PAC_RAD;
+                if (this.currentDirection == Direction.UP) {
+                    checkWallA[1] = checkWallA[1] + Constants.PAC_RAD;
+                } else if (this.currentDirection == Direction.DOWN) {
+                    checkWallA[1] = checkWallA[1] - Constants.PAC_RAD;
+                }
                 break;
             case LEFT:
-                pacCoords[0] = pacCoords[0] - Constants.TILE_SIZE/2.0;
+                checkWallA[0] = checkWallB[0] = checkWallA[0] - Constants.PAC_RAD;
+                if (this.currentDirection == Direction.UP) {
+                    checkWallA[1] = checkWallA[1] + Constants.PAC_RAD;
+                } else if (this.currentDirection == Direction.DOWN) {
+                    checkWallA[1] = checkWallA[1] - Constants.PAC_RAD;
+                }
                 break;
             case DOWN:
-                pacCoords[1] = pacCoords[1] + Constants.TILE_SIZE/2.0;
+                checkWallA[1] = checkWallB[1] = checkWallA[1] + Constants.PAC_RAD;
+                if (this.currentDirection == Direction.RIGHT) {
+                    checkWallA[0] = checkWallA[0] - Constants.PAC_RAD;
+                } else if (this.currentDirection == Direction.LEFT) {
+                    checkWallA[0] = checkWallA[0] + Constants.PAC_RAD;
+                }
                 break;
             case UP:
-                pacCoords[1] = pacCoords[1] - Constants.TILE_SIZE/2.0;
+                checkWallA[1] = checkWallB[1] = checkWallA[1] - Constants.PAC_RAD;
+                if (this.currentDirection == Direction.RIGHT) {
+                    checkWallA[0] = checkWallA[0] - Constants.PAC_RAD;
+                } else if (this.currentDirection == Direction.LEFT) {
+                    checkWallA[0] = checkWallA[0] + Constants.PAC_RAD;
+                }
                 break;
         }
 
-        System.out.println(Arrays.toString(pacCoords));
 
-        int[] arrayIndex = this.checkPosInArray(pacCoords);
+        int[] arrayIndexWallA = this.checkPosInArray(checkWallA);
 
         //returns false if the array index is out of bounds
         //ie. paccy doesn't noclip through the border
-        if ((arrayIndex[0] >= Constants.NUM_ROWS) || (arrayIndex[0] < 0) ||
-                (arrayIndex[1] >= Constants.NUM_COLS) || (arrayIndex[1] < 0)) {
+        if ((arrayIndexWallA[0] >= Constants.NUM_ROWS) || (arrayIndexWallA[0] < 0) ||
+                (arrayIndexWallA[1] >= Constants.NUM_COLS) || (arrayIndexWallA[1] < 0)) {
             return false;
         }
 
-        return this.mazeBoard.getIsXWay(arrayIndex[0], arrayIndex[1],
-                arrayIndex[2], arrayIndex[3]);
+        return this.mazeBoard.getIsXWay(arrayIndexWallA[0], arrayIndexWallA[1],
+                arrayIndexWallA[2], arrayIndexWallA[3]);
+    }
+
+    private void checkWallAtTurn() {
+        if (this.intendedDirection != null) {
+            System.out.println("checking for move");
+            if (this.checkMotionValidity(this.intendedDirection)) {
+                this.currentDirection = this.intendedDirection;
+                this.intendedDirection = null;
+            }
+        }
+    }
+
+
+    private void moveLogic(Direction newDirection) {
+        if (newDirection == this.currentDirection) {
+            this.intendedDirection = null;
+        } else if (newDirection.getOpposite() == this.currentDirection) {
+            this.currentDirection = newDirection;
+            this.intendedDirection = null;
+        } else {
+            if (this.checkMotionValidity(newDirection)) {
+                this.currentDirection = newDirection;
+                this.intendedDirection = null;
+                System.out.println("intended direction valid");
+            } else {
+                this.intendedDirection = newDirection;
+                System.out.println("intended direction invalid");
+            }
+
+
+            /*
+            TODO
+                ensure that paccy can only turn perpendicularly when at center of the border
+             */
+        }
     }
 
     /**
@@ -173,39 +229,6 @@ public class Pacman {
         }
     }
 
-    private void checkRightAngleMoveLogic() {
-        if (this.intendedDirection != null) {
-            System.out.println("checking for move");
-            if (this.checkMotionValidity(this.intendedDirection)) {
-                this.currentDirection = this.intendedDirection;
-                this.intendedDirection = null;
-            }
-        }
-    }
-
-    private void moveLogic(Direction newDirection) {
-        if (newDirection == this.currentDirection) {
-            this.intendedDirection = null;
-        } else if (newDirection.getOpposite() == this.currentDirection) {
-            this.currentDirection = newDirection;
-            this.intendedDirection = null;
-        } else {
-            if (this.checkMotionValidity(newDirection)) {
-                this.currentDirection = newDirection;
-                this.intendedDirection = null;
-                System.out.println("intended direction valid");
-            } else {
-                this.intendedDirection = newDirection;
-                System.out.println("intended direction invalid");
-            }
-
-
-            /*
-            TODO
-                ensure that paccy can only turn perpendicularly when at center of the border
-             */
-        }
-    }
 
     private void pacMover(Direction direction) {
         this.rotatePac(direction);
@@ -237,7 +260,6 @@ public class Pacman {
                 break;
         }
     }
-
 
     private void rotatePac(Direction direction) {
         switch (direction) {

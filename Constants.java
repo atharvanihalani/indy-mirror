@@ -9,7 +9,7 @@ public class Constants {
 
     public static final int TILE_SIZE = 25;
     public static final int NUM_ROWS = 8; //of blocks
-    public static final int NUM_COLS = 6;
+    public static final int NUM_COLS = 4;
 
     public static final int SCENE_WIDTH = (NUM_COLS*3 + 2)*TILE_SIZE;
     public static final int SCENE_HEIGHT = (NUM_ROWS*3 + 2)*TILE_SIZE + 35;
@@ -22,6 +22,8 @@ public class Constants {
 
     public static final Duration UPDATE_GAME_EVERY = Duration.millis(1);
     public static final Double PAC_DISPLACEMENT = 0.05;
+
+    public static final int PAC_RAD =  12;
 
 
 }

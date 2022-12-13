@@ -11,6 +11,7 @@ public class MazeBoard {
     private Pane gamePane;
     private MazeBlock[][] blockArray;
     private Pacman pacman;
+    private RedSus redSus;
     private boolean implementBacktracking;
 
     public MazeBoard(Pane gamePane) {
@@ -24,6 +25,7 @@ public class MazeBoard {
         this.setupMaze();
 
         this.pacman = new Pacman(this.gamePane, this);
+        this.redSus = new RedSus(this.gamePane);
     }
 
     public void keyHandler(KeyCode keyCode) {
@@ -470,6 +472,7 @@ public class MazeBoard {
 
     public void updateBoard() {
         this.pacman.updatePacman();
+        this.redSus.updateSus();
     }
 
 }

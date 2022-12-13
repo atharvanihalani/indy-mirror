@@ -1,9 +1,7 @@
 
 TODO
     have a couple diff end screens
-    add ghost
     give ghost random motion
-    figure movement glitch
     add timer
     maze visibility
     pacman mouth moving
@@ -36,3 +34,9 @@ design choices
 
     'running an arbitrary number of times till it works' logic is necessary for the random
     element. However, it also has atrocious time complexity.
+
+Known Bugs
+
+    pacman does glitch thru walls sometimes
+
+    pacman starts moving before game loads. not super sure how to deal w that

@@ -1,5 +1,7 @@
 package indy;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -39,7 +41,7 @@ public class Pacman {
         this.pacMouth.getPoints().addAll(12.0, 8-openMouth,
                 12.0, 8+openMouth,
                 0.0, 8.0);
-        this.pacMouth.setFill(Color.GREEN);
+        this.pacMouth.setFill(Color.BLACK);
 
         this.gamePane.getChildren().addAll(pacCircle, pacMouth);
 
@@ -55,7 +57,30 @@ public class Pacman {
             this.pacMover(this.currentDirection);
             this.checkWallAtTurn();
         }
+        this.checkPacDub();
     }
+
+    private void checkPacDub() {
+        int[] pacPosInArray;
+        double[] pacPos = new double[2];
+        pacPos[0] = this.pacCircle.getCenterX() - Constants.PAC_RAD;
+        pacPos[1] = this.pacCircle.getCenterY();
+        pacPosInArray = this.checkPosInArray(pacPos);
+
+        if ((pacPosInArray[0] == Constants.NUM_ROWS - 1) &&
+                (pacPosInArray[1] == Constants.NUM_COLS - 1) &&
+                (pacPosInArray[2] == 1) && (pacPosInArray[3] == 2)) {
+            //TODO method to stop timeline/end game
+
+            Image dubScreen = new Image("./cartoon/paccywinscreen.png",
+                    Constants.SCENE_WIDTH, Constants.SCENE_HEIGHT - 35, false, true);
+            ImageView dubScreenView = new ImageView();
+            dubScreenView.setImage(dubScreen);
+            this.gamePane.getChildren().add(dubScreenView);
+        }
+    }
+
+
 
     /**
      * This method checks whether motion is possible in a given
@@ -236,27 +261,27 @@ public class Pacman {
         switch (direction) {
             case RIGHT:
                 this.pacMouth.setLayoutX(this.pacMouth.getLayoutX() +
-                        Constants.PAC_DISPLACEMENT);
+                        Constants.MOVE_SPEED);
                 this.pacCircle.setCenterX(this.pacCircle.getCenterX() +
-                        Constants.PAC_DISPLACEMENT);
+                        Constants.MOVE_SPEED);
                 break;
             case LEFT:
                 this.pacMouth.setLayoutX(this.pacMouth.getLayoutX() -
-                        Constants.PAC_DISPLACEMENT);
+                        Constants.MOVE_SPEED);
                 this.pacCircle.setCenterX(this.pacCircle.getCenterX() -
-                        Constants.PAC_DISPLACEMENT);
+                        Constants.MOVE_SPEED);
                 break;
             case UP:
                 this.pacMouth.setLayoutY(this.pacMouth.getLayoutY() -
-                        Constants.PAC_DISPLACEMENT);
+                        Constants.MOVE_SPEED);
                 this.pacCircle.setCenterY(this.pacCircle.getCenterY() -
-                        Constants.PAC_DISPLACEMENT);
+                        Constants.MOVE_SPEED);
                 break;
             case DOWN:
                 this.pacMouth.setLayoutY(this.pacMouth.getLayoutY() +
-                        Constants.PAC_DISPLACEMENT);
+                        Constants.MOVE_SPEED);
                 this.pacCircle.setCenterY(this.pacCircle.getCenterY() +
-                        Constants.PAC_DISPLACEMENT);
+                        Constants.MOVE_SPEED);
                 break;
         }
     }

@@ -2,8 +2,6 @@ package indy;
 
 import javafx.scene.layout.Pane;
 
-import java.util.Arrays;
-
 public abstract class MazeBlock {
 
     private final Pane gamePane;
@@ -84,15 +82,17 @@ public abstract class MazeBlock {
         return this.tileArray;
     }
 
-
-
-    /*
-    method to check ifTileWall
-        accepts coords of tileArray as arg
-        checks if tile isWall and returns boolean
+    /**
+     * technically a helper for a helper for a helper but jeez we'll
+     * ignore that.
+     * just returns whether a particular tile is a way or not.
+     * @param tileArrayRow tile row index
+     * @param tileArrayCol tile column index
+     * @return is way?
      */
-
-
+    public boolean isTileWay(int tileArrayRow, int tileArrayCol) {
+        return !this.tileArray[tileArrayRow][tileArrayCol].getIsWall();
+    }
 
 
 

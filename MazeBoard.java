@@ -6,23 +6,23 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * oooo things get pretty interesting over here.
+ */
 public class MazeBoard {
 
     private Pane gamePane;
     private MazeBlock[][] blockArray;
     private Pacman pacman;
     private RedSus redSus;
-    private boolean implementBacktracking;
-    private boolean gameOver;
+    private boolean gameOver; //boolean indicating if the game is over or not
 
     public MazeBoard(Pane gamePane) {
         this.gamePane = gamePane;
         this.blockArray = new MazeBlock[Constants.NUM_ROWS][Constants.NUM_COLS];
-        this.implementBacktracking = false;
         this.gameOver = false;
 
         this.setupBorder();
@@ -30,13 +30,9 @@ public class MazeBoard {
         this.setupExit();
         this.setupMaze();
 
+        //these are set up last in order to show up on top of the gamepane
         this.pacman = new Pacman(this.gamePane, this);
         this.redSus = new RedSus(this.gamePane, this);
-
-    }
-
-    public void keyHandler(KeyCode keyCode) {
-        this.pacman.keyHandler(keyCode);
     }
 
     /**
@@ -85,8 +81,8 @@ public class MazeBoard {
      */
     private void setupFirstBlock() {
         this.blockArray[0][0] = new EllBlock(this.gamePane, 0, 0, 1);
-
     }
+
 
     /**
      * Hoooo boy, buckle up; this is a spiiicy fuckin method. it's also
@@ -451,10 +447,10 @@ public class MazeBoard {
 
     /**
      * Helper method for a helper method rip. This returns whether a specific
-     * tile in a specific block is a 'way' or not. Returns false if the block
-     * hasn't been instantiated.
+     * tile in a specific block is a 'way' or not. The actual method is delegated
+     * to MazeBlock cuz better design (low coupling?)
+     * Also, it returns false if the block hasn't been instantiated.
      *
-     * TODO better design would delegate this method to MazeBlock (low coupling)
      * @param blArrRow block array row index
      * @param blArrCol block array column index
      * @param tlArrRow tile array row index (within that specific block)
@@ -462,25 +458,31 @@ public class MazeBoard {
      * @return boolean indicating if the tile is a path/way or a wall
      */
     public boolean getIsXWay(int blArrRow, int blArrCol, int tlArrRow, int tlArrCol) {
-
-        if (blArrRow < 0) {
-            throw new IllegalStateException("Block Array Row is " + blArrRow);
-        }
-        if (blArrCol < 0) {
-            throw new IllegalStateException("Block Array Column is " + blArrCol);
-        }
-
         if (this.blockArray[blArrRow][blArrCol] != null) {
-            return !this.blockArray[blArrRow][blArrCol].getTileArray()[tlArrRow][tlArrCol].getIsWall();
+            return this.blockArray[blArrRow][blArrCol].isTileWay(tlArrRow, tlArrCol);
         } else {
             return false;
         }
     }
 
+
+    /**
+     * Helper method that updates the game state every instant. It's always checking
+     * for any collision bw pacman and the ghost. It delegates everything else to
+     * those two respective classes.
+     */
     public void updateBoard() {
         this.pacman.updatePacman();
         this.redSus.updateSus();
         this.checkCollision();
+    }
+
+    /**
+     * Simply passes on the input to pacman's keyhandler method
+     * @param keyCode keycode
+     */
+    public void keyHandler(KeyCode keyCode) {
+        this.pacman.keyHandler(keyCode);
     }
 
     /**
@@ -511,6 +513,19 @@ public class MazeBoard {
         return arraysIndex;
     }
 
+    /**
+     * Accessor method that returns whether the game is over or not.
+     * @return boolean
+     */
+    public boolean getGameOver() {
+        return this.gameOver;
+    }
+
+
+    /**
+     * Method called when the timer has run out. Adds an end-screen image
+     * and sets game over to be true
+     */
     public void timeUp() {
         Image timesUp = new Image("./indy/timesup.png", Constants.SCENE_WIDTH,
                 Constants.SCENE_HEIGHT - Constants.QUIT_PANE_HEIGHT -
@@ -520,6 +535,10 @@ public class MazeBoard {
         this.gameOver = true;
     }
 
+    /**
+     * Method called when pacman reaches the exit and wins. Adds an image
+     * and sets the game to be over.
+     */
     public void pacDub() {
         Image dubScreen = new Image("./indy/paccywinscreen.png", Constants.SCENE_WIDTH,
                 Constants.SCENE_HEIGHT - Constants.QUIT_PANE_HEIGHT -
@@ -529,6 +548,10 @@ public class MazeBoard {
         this.gameOver = true;
     }
 
+    /**
+     * Method that constantly checks for a collision bw pacman and blinky.
+     * If it detects one, it adds an end screen and sets to game to be over.
+     */
     public void checkCollision() {
         int[] pacPos = this.pacman.getPosInArray();
         int[] redPos = this.redSus.getPosInArray();
@@ -542,9 +565,5 @@ public class MazeBoard {
             this.gamePane.getChildren().add(deadView);
             this.gameOver = true;
         }
-    }
-
-    public boolean getGameOver() {
-        return this.gameOver;
     }
 }

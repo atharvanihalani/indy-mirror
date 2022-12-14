@@ -41,6 +41,8 @@ Known Bugs
 
     pacman starts moving before game loads. not super sure how to deal w that
 
+    ghost motion can be goofy
+
 Debugging Collaborators
 
     none

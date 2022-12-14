@@ -8,6 +8,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
+/**
+ * Nothing special, just your regular pane organizer.
+ * Adds a quit button and a timer to the scene.
+ * Has a getRoot() method.
+ * Same old, same old.
+ */
 public class PaneOrganizer {
 
     private BorderPane root;
@@ -25,6 +31,9 @@ public class PaneOrganizer {
         this.createTimerBar();
     }
 
+    /**
+     * Method to create the bottom bar with the quit button.
+     */
     private void createQuitBar() {
         HBox quitBox = new HBox();
         Button quitButton = new Button("Quit");
@@ -39,6 +48,9 @@ public class PaneOrganizer {
         this.root.setBottom(quitBox);
     }
 
+    /**
+     * Method to create the top bar with the timer.
+     */
     private void createTimerBar() {
         HBox timerBox = new HBox();
 
@@ -51,6 +63,10 @@ public class PaneOrganizer {
         this.root.setTop(timerBox);
     }
 
+    /**
+     * Accessor method to get the root node.
+     * @return the root Pane
+     */
     public Pane getRoot() {
         return this.root;
     }

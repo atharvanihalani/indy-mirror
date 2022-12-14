@@ -10,6 +10,7 @@ import javafx.scene.Scene;
  *
  * Class comments here...
  *
+ * ...move along, nothing to see here
  */
 
 public class App extends Application {

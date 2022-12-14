@@ -1,10 +1,14 @@
 package indy;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MazeBoard {
 
@@ -13,11 +17,13 @@ public class MazeBoard {
     private Pacman pacman;
     private RedSus redSus;
     private boolean implementBacktracking;
+    private boolean gameOver;
 
     public MazeBoard(Pane gamePane) {
         this.gamePane = gamePane;
         this.blockArray = new MazeBlock[Constants.NUM_ROWS][Constants.NUM_COLS];
         this.implementBacktracking = false;
+        this.gameOver = false;
 
         this.setupBorder();
         this.setupFirstBlock();
@@ -26,6 +32,7 @@ public class MazeBoard {
 
         this.pacman = new Pacman(this.gamePane, this);
         this.redSus = new RedSus(this.gamePane, this);
+
     }
 
     public void keyHandler(KeyCode keyCode) {
@@ -473,6 +480,7 @@ public class MazeBoard {
     public void updateBoard() {
         this.pacman.updatePacman();
         this.redSus.updateSus();
+        this.checkCollision();
     }
 
     /**
@@ -501,5 +509,42 @@ public class MazeBoard {
         arraysIndex[3] = (int) Math.floor(tempXVar / Constants.TILE_SIZE);
 
         return arraysIndex;
+    }
+
+    public void timeUp() {
+        Image timesUp = new Image("./indy/timesup.png", Constants.SCENE_WIDTH,
+                Constants.SCENE_HEIGHT - Constants.QUIT_PANE_HEIGHT -
+                        Constants.TIMER_PANE_HEIGHT, false, true);
+        ImageView timesUpView = new ImageView(timesUp);
+        this.gamePane.getChildren().add(timesUpView);
+        this.gameOver = true;
+    }
+
+    public void pacDub() {
+        Image dubScreen = new Image("./indy/paccywinscreen.png", Constants.SCENE_WIDTH,
+                Constants.SCENE_HEIGHT - Constants.QUIT_PANE_HEIGHT -
+                        Constants.TIMER_PANE_HEIGHT, false, true);
+        ImageView dubScreenView = new ImageView(dubScreen);
+        this.gamePane.getChildren().add(dubScreenView);
+        this.gameOver = true;
+    }
+
+    public void checkCollision() {
+        int[] pacPos = this.pacman.getPosInArray();
+        int[] redPos = this.redSus.getPosInArray();
+
+        if (Arrays.equals(pacPos, redPos)) {
+            System.out.println("dead ass. deadass.");
+            Image killScreen = new Image("./indy/amogushaha.png", Constants.SCENE_WIDTH,
+                    Constants.SCENE_HEIGHT - Constants.QUIT_PANE_HEIGHT -
+                            Constants.TIMER_PANE_HEIGHT, false, true);
+            ImageView deadView = new ImageView(killScreen);
+            this.gamePane.getChildren().add(deadView);
+            this.gameOver = true;
+        }
+    }
+
+    public boolean getGameOver() {
+        return this.gameOver;
     }
 }

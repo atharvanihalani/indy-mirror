@@ -105,6 +105,15 @@ public class RedSus {
                 arrayIndexWall[2], arrayIndexWall[3]);
     }
 
+    public int[] getPosInArray() {
+        double[] coords = new double[2];
+        coords[0] = this.imposter[0].getLayoutX();
+        coords[1] = this.imposter[0].getLayoutY();
+
+        return this.mazeBoard.checkPosInArray(coords);
+
+    }
+
     private void vent(Direction direction) {
         switch (direction) {
             case RIGHT:

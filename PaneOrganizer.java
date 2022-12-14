@@ -44,7 +44,7 @@ public class PaneOrganizer {
 
         timerBox.setFocusTraversable(false);
         timerBox.setPrefSize(Constants.SCENE_WIDTH, Constants.TIMER_PANE_HEIGHT);
-        timerBox.setStyle("-fx-background-color: #B8C1FD");
+        timerBox.setStyle("-fx-background-color: #fafafa");
         timerBox.getChildren().add(this.timerLabel);
         timerBox.setAlignment(Pos.CENTER);
 

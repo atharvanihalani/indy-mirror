@@ -8,7 +8,7 @@ public class Constants {
 
 
     public static final int TILE_SIZE = 25;
-    public static final int NUM_ROWS = 8; //of blocks
+    public static final int NUM_ROWS = 4; //of blocks
     public static final int NUM_COLS = 4;
     public static final int QUIT_PANE_HEIGHT = 35;
     public static final int TIMER_PANE_HEIGHT = 50;
@@ -28,7 +28,7 @@ public class Constants {
 
     public static final int PAC_RADIUS =  12;
 
-    public static final int TIMER_COUNT = NUM_COLS*NUM_ROWS;
+    public static final int TIMER_COUNT = (int) (NUM_COLS*NUM_ROWS*1.5);
 
 
 }

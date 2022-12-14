@@ -1,6 +1,5 @@
 
 TODO
-    have a couple diff end screens
     improve ghost motion??
     maze visibility
     pacman mouth moving
@@ -33,6 +32,8 @@ design choices
 
     'running an arbitrary number of times till it works' logic is necessary for the random
     element. However, it also has atrocious time complexity.
+
+    interface/inheritance might have been useful for pacman + amogus
 
 Known Bugs
 

@@ -15,12 +15,16 @@ public class IndyGame {
     private MazeBoard mazeBoard;
     private Label timerLabel;
     private int timerCount;
+    private Timeline gameTimeline;
+    private Timeline timerTimeline;
 
     public IndyGame(Pane gamePane, Label timerLabel) {
         this.gamePane = gamePane;
         this.mazeBoard = new MazeBoard(gamePane);
         this.timerLabel = timerLabel;
         this.timerCount = Constants.TIMER_COUNT;
+        this.gameTimeline = new Timeline();
+        this.timerTimeline = new Timeline();
 
         this.startGame();
     }
@@ -39,19 +43,20 @@ public class IndyGame {
 
         KeyFrame gameFrame = new KeyFrame(Constants.UPDATE_GAME_EVERY,
                 (ActionEvent event) -> this.updateGame());
-        Timeline gameTimeline = new Timeline(gameFrame);
-        gameTimeline.setCycleCount(Animation.INDEFINITE);
-        gameTimeline.play();
+        this.gameTimeline.getKeyFrames().add(gameFrame);
+        this.gameTimeline.setCycleCount(Animation.INDEFINITE);
+        this.gameTimeline.play();
         
         KeyFrame timerFrame = new KeyFrame(Duration.seconds(1),
                 (ActionEvent event) -> this.updateTimer());
-        Timeline timerTimeline = new Timeline(timerFrame);
-        timerTimeline.setCycleCount(Animation.INDEFINITE);
-        timerTimeline.play();
+        this.timerTimeline.getKeyFrames().add(timerFrame);
+        this.timerTimeline.setCycleCount(Animation.INDEFINITE);
+        this.timerTimeline.play();
     }
 
     private void updateGame() {
         this.mazeBoard.updateBoard();
+        this.ifGameOver();
     }
 
     private void updateTimer() {
@@ -60,14 +65,16 @@ public class IndyGame {
         System.out.println(this.timerCount);
 
         if (this.timerCount == 0) {
-            this.timeUp();
+            this.mazeBoard.timeUp();
         }
     }
 
-    private void timeUp() {
-
+    private void ifGameOver() {
+        if (this.mazeBoard.getGameOver()) {
+            this.gameTimeline.stop();
+            this.timerTimeline.stop();
+        }
     }
-
 
 
 

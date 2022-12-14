@@ -70,17 +70,18 @@ public class Pacman {
         if ((pacPosInArray[0] == Constants.NUM_ROWS - 1) &&
                 (pacPosInArray[1] == Constants.NUM_COLS - 1) &&
                 (pacPosInArray[2] == 1) && (pacPosInArray[3] == 2)) {
-            //TODO method to stop timeline/end game
-
-            Image dubScreen = new Image("./cartoon/paccywinscreen.png",
-                    Constants.SCENE_WIDTH, Constants.SCENE_HEIGHT - 35, false, true);
-            ImageView dubScreenView = new ImageView();
-            dubScreenView.setImage(dubScreen);
-            this.gamePane.getChildren().add(dubScreenView);
+            this.mazeBoard.pacDub();
         }
     }
 
 
+    public int[] getPosInArray() {
+        double[] coords = new double[2];
+        coords[0] = this.pacCircle.getCenterX();
+        coords[1] = this.pacCircle.getCenterY();
+
+        return this.mazeBoard.checkPosInArray(coords);
+    }
 
     /**
      * This method checks whether motion is possible in a given

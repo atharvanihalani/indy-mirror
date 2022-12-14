@@ -10,7 +10,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * oooo things get pretty interesting over here.
+ * oooo things get pretty interesting over here. this class does most of the
+ * logical heavy lifting in this project. It contains methods to randomly set
+ * up the entire maze, the border, the first and last blocks; accessor methods
+ * to check whether a tile is a path, or whether the game is over; and helper
+ * methods to update the game, handle key input, check the index of coordinates
+ * in both the block and tile array, and methods to set up the end screen in
+ * different scenarios.
+ * design could be polished, but pretty solid class overall.
  */
 public class MazeBoard {
 
@@ -116,19 +123,11 @@ public class MazeBoard {
         for (int i = 0; i < Constants.NUM_ROWS; i++) {
             for (int j = 0; j < Constants.NUM_COLS; j++) {
 
-                //TODO remove error detecting print lines
-
                 //ensures we don't replace the first or last block
                 if ((i == 0 && j == 0) || (i == Constants.NUM_ROWS - 1 &&
                         j == Constants.NUM_COLS-1)) {
                     continue;
                 }
-
-//                System.out.println(String.format("Currently iterating through " +
-//                        "block [%s, %s] \r\n " +
-//                        "random block: %s \r\n" +
-//                        "random rotation: %s",
-//                        i, j, randomBlockSwitch, randomRotation));
 
                 /*
                 This next bit checks backtracking based on the outer constraints.
@@ -180,15 +179,12 @@ public class MazeBoard {
                  */
                 if (!checkConstraintsMatch(
                         outerConstraints, innerConstraints, isLast)) {
-//                    System.out.println("lol chutiya, try again \r\n");
                     if (j == 0) {
                         j = Constants.NUM_COLS - 1;
                         i--;
                     } else {
                         j--;
                     }
-                } else {
-//                    System.out.println("block gen successful \r\n");
                 }
             }
         }
@@ -254,7 +250,6 @@ public class MazeBoard {
                 externalConstraints[3] = true;
             }
         }
-
         return externalConstraints;
     }
 
@@ -287,8 +282,6 @@ public class MazeBoard {
         }
         backtrackingInfo.add(true);
 
-        //System.out.println("backtracking? " + backtrackingInfo.get(0));
-
         //randomly chooses a direction to backtrack in
         boolean whereToBacktrack;
         switch ((int) Math.floor(Math.random()*2)) {
@@ -302,8 +295,6 @@ public class MazeBoard {
                 throw new IllegalStateException("Unexpected value: " +
                         (int) Math.floor(Math.random() * 2));
         }
-
-        //System.out.println("backtracking to: " + whereToBacktrack);
 
         if (j == 0) {
             j--;

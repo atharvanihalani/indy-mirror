@@ -1,8 +1,7 @@
 
 TODO
     have a couple diff end screens
-    give ghost random motion
-    add timer
+    improve ghost motion??
     maze visibility
     pacman mouth moving
     home screen to show instructions + select maze size (affects timer & num of ghosts)
@@ -40,3 +39,7 @@ Known Bugs
     pacman does glitch thru walls sometimes
 
     pacman starts moving before game loads. not super sure how to deal w that
+
+Debugging Collaborators
+
+    none

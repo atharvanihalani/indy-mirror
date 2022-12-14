@@ -4,6 +4,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
@@ -12,10 +13,14 @@ public class IndyGame {
 
     private Pane gamePane;
     private MazeBoard mazeBoard;
+    private Label timerLabel;
+    private int timerCount;
 
-    public IndyGame(Pane gamePane) {
+    public IndyGame(Pane gamePane, Label timerLabel) {
         this.gamePane = gamePane;
         this.mazeBoard = new MazeBoard(gamePane);
+        this.timerLabel = timerLabel;
+        this.timerCount = Constants.TIMER_COUNT;
 
         this.startGame();
     }
@@ -50,12 +55,19 @@ public class IndyGame {
     }
 
     private void updateTimer() {
-       //update timer
+        this.timerCount--;
+        this.timerLabel.setText("Time Left: " + this.timerCount);
+        System.out.println(this.timerCount);
+
+        if (this.timerCount == 0) {
+            this.timeUp();
+        }
     }
 
-    /*
-    method for timer countdown
-     */
+    private void timeUp() {
+
+    }
+
 
 
 

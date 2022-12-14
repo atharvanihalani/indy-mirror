@@ -22,7 +22,7 @@ public class Pacman {
     private Rotate standardRotate;
     private Stack<double[]> backTrackStack;
     public Pacman(Pane gamePane, MazeBoard mazeBoard) {
-        this.pacCircle = new Circle(Constants.PAC_RAD, Color.YELLOW);
+        this.pacCircle = new Circle(Constants.PAC_RADIUS, Color.YELLOW);
         this.pacMouth = new Polygon();
         this.gamePane = gamePane;
         this.mazeBoard = mazeBoard;
@@ -63,9 +63,9 @@ public class Pacman {
     private void checkPacDub() {
         int[] pacPosInArray;
         double[] pacPos = new double[2];
-        pacPos[0] = this.pacCircle.getCenterX() - Constants.PAC_RAD;
+        pacPos[0] = this.pacCircle.getCenterX() - Constants.PAC_RADIUS;
         pacPos[1] = this.pacCircle.getCenterY();
-        pacPosInArray = this.checkPosInArray(pacPos);
+        pacPosInArray = this.mazeBoard.checkPosInArray(pacPos);
 
         if ((pacPosInArray[0] == Constants.NUM_ROWS - 1) &&
                 (pacPosInArray[1] == Constants.NUM_COLS - 1) &&
@@ -91,11 +91,9 @@ public class Pacman {
      * @return indicates whether motion is possible or not
      */
     private boolean checkMotionValidity(Direction direction) {
-        double[] checkWallA = new double[2];
-        double[] checkWallB = new double[2];
-        checkWallA[0] = checkWallB[0] = this.pacCircle.getCenterX();
-        checkWallA[1] = checkWallB[1] = this.pacCircle.getCenterY();
-
+        double[] checkWall = new double[2];
+        checkWall[0] = this.pacCircle.getCenterX();
+        checkWall[1] = this.pacCircle.getCenterY();
 
         /*
         increments coords in the direction of motion in order to get
@@ -104,56 +102,54 @@ public class Pacman {
          */
         switch (direction) {
             case RIGHT:
-                checkWallA[0] = checkWallB[0] = checkWallA[0] + Constants.PAC_RAD;
+                checkWall[0] = checkWall[0] + Constants.PAC_RADIUS;
                 if (this.currentDirection == Direction.UP) {
-                    checkWallA[1] = checkWallA[1] + Constants.PAC_RAD;
+                    checkWall[1] = checkWall[1] + Constants.PAC_RADIUS;
                 } else if (this.currentDirection == Direction.DOWN) {
-                    checkWallA[1] = checkWallA[1] - Constants.PAC_RAD;
+                    checkWall[1] = checkWall[1] - Constants.PAC_RADIUS;
                 }
                 break;
             case LEFT:
-                checkWallA[0] = checkWallB[0] = checkWallA[0] - Constants.PAC_RAD;
+                checkWall[0] = checkWall[0] - Constants.PAC_RADIUS;
                 if (this.currentDirection == Direction.UP) {
-                    checkWallA[1] = checkWallA[1] + Constants.PAC_RAD;
+                    checkWall[1] = checkWall[1] + Constants.PAC_RADIUS;
                 } else if (this.currentDirection == Direction.DOWN) {
-                    checkWallA[1] = checkWallA[1] - Constants.PAC_RAD;
+                    checkWall[1] = checkWall[1] - Constants.PAC_RADIUS;
                 }
                 break;
             case DOWN:
-                checkWallA[1] = checkWallB[1] = checkWallA[1] + Constants.PAC_RAD;
+                checkWall[1] = checkWall[1] + Constants.PAC_RADIUS;
                 if (this.currentDirection == Direction.RIGHT) {
-                    checkWallA[0] = checkWallA[0] - Constants.PAC_RAD;
+                    checkWall[0] = checkWall[0] - Constants.PAC_RADIUS;
                 } else if (this.currentDirection == Direction.LEFT) {
-                    checkWallA[0] = checkWallA[0] + Constants.PAC_RAD;
+                    checkWall[0] = checkWall[0] + Constants.PAC_RADIUS;
                 }
                 break;
             case UP:
-                checkWallA[1] = checkWallB[1] = checkWallA[1] - Constants.PAC_RAD;
+                checkWall[1] = checkWall[1] - Constants.PAC_RADIUS;
                 if (this.currentDirection == Direction.RIGHT) {
-                    checkWallA[0] = checkWallA[0] - Constants.PAC_RAD;
+                    checkWall[0] = checkWall[0] - Constants.PAC_RADIUS;
                 } else if (this.currentDirection == Direction.LEFT) {
-                    checkWallA[0] = checkWallA[0] + Constants.PAC_RAD;
+                    checkWall[0] = checkWall[0] + Constants.PAC_RADIUS;
                 }
                 break;
         }
 
-
-        int[] arrayIndexWallA = this.checkPosInArray(checkWallA);
+        int[] arrayIndexWall = this.mazeBoard.checkPosInArray(checkWall);
 
         //returns false if the array index is out of bounds
         //ie. paccy doesn't noclip through the border
-        if ((arrayIndexWallA[0] >= Constants.NUM_ROWS) || (arrayIndexWallA[0] < 0) ||
-                (arrayIndexWallA[1] >= Constants.NUM_COLS) || (arrayIndexWallA[1] < 0)) {
+        if ((arrayIndexWall[0] >= Constants.NUM_ROWS) || (arrayIndexWall[0] < 0) ||
+                (arrayIndexWall[1] >= Constants.NUM_COLS) || (arrayIndexWall[1] < 0)) {
             return false;
         }
 
-        return this.mazeBoard.getIsXWay(arrayIndexWallA[0], arrayIndexWallA[1],
-                arrayIndexWallA[2], arrayIndexWallA[3]);
+        return this.mazeBoard.getIsXWay(arrayIndexWall[0], arrayIndexWall[1],
+                arrayIndexWall[2], arrayIndexWall[3]);
     }
 
     private void checkWallAtTurn() {
         if (this.intendedDirection != null) {
-            System.out.println("checking for move");
             if (this.checkMotionValidity(this.intendedDirection)) {
                 this.currentDirection = this.intendedDirection;
                 this.intendedDirection = null;
@@ -172,47 +168,12 @@ public class Pacman {
             if (this.checkMotionValidity(newDirection)) {
                 this.currentDirection = newDirection;
                 this.intendedDirection = null;
-                System.out.println("intended direction valid");
             } else {
                 this.intendedDirection = newDirection;
-                System.out.println("intended direction invalid");
             }
-
-
-            /*
-            TODO
-                ensure that paccy can only turn perpendicularly when at center of the border
-             */
         }
     }
 
-    /**
-     * Helper method that takes in a pair of coordinates, and returns the
-     * corresponding index in the nested 2D array.
-     * @param coords array of size 2 with the coordinates of a certain
-     *               point (x, y)
-     * @return an integer array of size 4 with the ordered indexes of
-     * both 2d arrays. note the y index is calculated first because the
-     * 2d arrays are in row-major order
-     */
-    private int[] checkPosInArray(double[] coords) {
-
-        //external (block) array coordinates
-        int[] arraysIndex = new int[4];
-        arraysIndex[0] = (int) Math.floor((coords[1] - Constants.TILE_SIZE) /
-                (Constants.TILE_SIZE*3));
-        arraysIndex[1] = (int) Math.floor((coords[0] - Constants.TILE_SIZE) /
-                (Constants.TILE_SIZE*3));
-
-        double tempXVar = (coords[0] - Constants.TILE_SIZE) % (Constants.TILE_SIZE*3);
-        double tempYVar = (coords[1] - Constants.TILE_SIZE) % (Constants.TILE_SIZE*3);
-
-        //internal (tile) array coordinates
-        arraysIndex[2] = (int) Math.floor(tempYVar / Constants.TILE_SIZE);
-        arraysIndex[3] = (int) Math.floor(tempXVar / Constants.TILE_SIZE);
-
-        return arraysIndex;
-    }
 
     public void keyHandler(KeyCode keyCode) {
         switch (keyCode) {

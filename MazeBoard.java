@@ -25,7 +25,7 @@ public class MazeBoard {
         this.setupMaze();
 
         this.pacman = new Pacman(this.gamePane, this);
-        this.redSus = new RedSus(this.gamePane);
+        this.redSus = new RedSus(this.gamePane, this);
     }
 
     public void keyHandler(KeyCode keyCode) {
@@ -475,4 +475,31 @@ public class MazeBoard {
         this.redSus.updateSus();
     }
 
+    /**
+     * Helper method that takes in a pair of coordinates, and returns the
+     * corresponding index in the nested 2D array.
+     * @param coords array of size 2 with the coordinates of a certain
+     *               point (x, y)
+     * @return an integer array of size 4 with the ordered indexes of
+     * both 2d arrays. note the y index is calculated first because the
+     * 2d arrays are in row-major order
+     */
+    public int[] checkPosInArray(double[] coords) {
+
+        //external (block) array coordinates
+        int[] arraysIndex = new int[4];
+        arraysIndex[0] = (int) Math.floor((coords[1] - Constants.TILE_SIZE) /
+                (Constants.TILE_SIZE*3));
+        arraysIndex[1] = (int) Math.floor((coords[0] - Constants.TILE_SIZE) /
+                (Constants.TILE_SIZE*3));
+
+        double tempXVar = (coords[0] - Constants.TILE_SIZE) % (Constants.TILE_SIZE*3);
+        double tempYVar = (coords[1] - Constants.TILE_SIZE) % (Constants.TILE_SIZE*3);
+
+        //internal (tile) array coordinates
+        arraysIndex[2] = (int) Math.floor(tempYVar / Constants.TILE_SIZE);
+        arraysIndex[3] = (int) Math.floor(tempXVar / Constants.TILE_SIZE);
+
+        return arraysIndex;
+    }
 }

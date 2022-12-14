@@ -12,11 +12,13 @@ public class RedSus {
     private Pane gamePane;
     private Shape[] imposter;
     private Direction currentDirection;
+    private MazeBoard mazeBoard;
 
-    public RedSus(Pane gamePane) {
+    public RedSus(Pane gamePane, MazeBoard mazeBoard) {
         this.gamePane = gamePane;
         this.imposter = new Shape[5];
         this.currentDirection = Direction.LEFT;
+        this.mazeBoard = mazeBoard;
 
         this.constructCrewmate();
     }
@@ -49,9 +51,59 @@ public class RedSus {
     }
 
     public void updateSus() {
-        this.vent(this.currentDirection);
+        if (this.checkMotionValidity(this.currentDirection)) {
+            this.vent(this.currentDirection);
+        } else {
+            this.currentDirection = this.getRandomDirection();
+        }
+        //TODO fix motion if got time
     }
 
+    public Direction getRandomDirection() {
+        switch ((int) Math.floor(Math.random()*4)) {
+            case 0:
+                return Direction.UP;
+            case 1:
+                return Direction.DOWN;
+            case 2:
+                return Direction.RIGHT;
+            case 3:
+                return Direction.LEFT;
+            default:
+                throw new IllegalStateException("where tf u goin");
+        }
+    }
+
+    private boolean checkMotionValidity(Direction direction) {
+        double[] checkWall = new double[2];
+        checkWall[0] = this.imposter[0].getLayoutX() + 8;
+        checkWall[1] = this.imposter[1].getLayoutY() + 4;
+
+        switch (direction) {
+            case RIGHT:
+                checkWall[0] = checkWall[0] + 15;
+                break;
+            case LEFT:
+                checkWall[0] = checkWall[0] - 15;
+                break;
+            case UP:
+                checkWall[1] = checkWall[1] - 20;
+                break;
+            case DOWN:
+                checkWall[1] = checkWall[1] + 20;
+                break;
+        }
+
+        int[] arrayIndexWall = this.mazeBoard.checkPosInArray(checkWall);
+
+        if ((arrayIndexWall[0] >= Constants.NUM_ROWS) || (arrayIndexWall[0] < 0) ||
+                (arrayIndexWall[1] >= Constants.NUM_COLS) || (arrayIndexWall[1] < 0)) {
+            return false;
+        }
+
+        return this.mazeBoard.getIsXWay(arrayIndexWall[0], arrayIndexWall[1],
+                arrayIndexWall[2], arrayIndexWall[3]);
+    }
 
     private void vent(Direction direction) {
         switch (direction) {

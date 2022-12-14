@@ -3,6 +3,7 @@ package indy;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -11,27 +12,43 @@ public class PaneOrganizer {
 
     private BorderPane root;
     private Pane gamePane;
+    private Label timerLabel;
 
     public PaneOrganizer() {
         this.gamePane = new Pane();
         this.root = new BorderPane(this.gamePane);
-        new IndyGame(this.gamePane);
+        this.timerLabel = new Label();
 
-        this.createQuitButton();
+        new IndyGame(this.gamePane, this.timerLabel);
+
+        this.createQuitBar();
+        this.createTimerBar();
     }
 
-    private void createQuitButton() {
-        HBox quitPane = new HBox();
+    private void createQuitBar() {
+        HBox quitBox = new HBox();
         Button quitButton = new Button("Quit");
 
         quitButton.setOnAction((ActionEvent e) -> System.exit(0));
         quitButton.setFocusTraversable(false);
-        quitPane.setPrefSize(Constants.SCENE_WIDTH, 35);
-        quitPane.setStyle("-fx-background-color: #DCDCDC");
-        quitPane.getChildren().add(quitButton);
-        quitPane.setAlignment(Pos.CENTER);
+        quitBox.setPrefSize(Constants.SCENE_WIDTH, Constants.QUIT_PANE_HEIGHT);
+        quitBox.setStyle("-fx-background-color: #DCDCDC");
+        quitBox.getChildren().add(quitButton);
+        quitBox.setAlignment(Pos.CENTER);
 
-        this.root.setBottom(quitPane);
+        this.root.setBottom(quitBox);
+    }
+
+    private void createTimerBar() {
+        HBox timerBox = new HBox();
+
+        timerBox.setFocusTraversable(false);
+        timerBox.setPrefSize(Constants.SCENE_WIDTH, Constants.TIMER_PANE_HEIGHT);
+        timerBox.setStyle("-fx-background-color: #B8C1FD");
+        timerBox.getChildren().add(this.timerLabel);
+        timerBox.setAlignment(Pos.CENTER);
+
+        this.root.setTop(timerBox);
     }
 
     public Pane getRoot() {

@@ -1,7 +1,7 @@
 package indy;
 
 public enum Constraints {
-    ; //TODO what rlly is this for??
+    ;
     static boolean[] DEAD_BLOCK = {true, false, false, false};
     static boolean[] AYE_BLOCK = {true, false, true, false};
     static boolean[] ELL_BLOCK = {true, true, false, false};

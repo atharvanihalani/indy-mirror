@@ -7,7 +7,7 @@ import javafx.scene.shape.Rectangle;
 /**
  * Wrapper class for a single maze 'tile'. Nine tiles make up
  * a 'block.' Contains methods to set the tile color, position,
- * _____, _____
+ * and whether a tile is a wall or not
  */
 public class MazeTile {
 
@@ -47,6 +47,10 @@ public class MazeTile {
     }
 
 
+    /**
+     * mutator method that sets whether a tile is a wall or a way
+     * @param isWall boolean determining this
+     */
     public void setIsWall(boolean isWall) {
         this.isWall = isWall;
 
@@ -57,14 +61,18 @@ public class MazeTile {
         }
     }
 
+    /**
+     * accessor method that returns whether a tile is a wall or not
+     * @return isWall?
+     */
     public boolean getIsWall() {
         return this.isWall;
     }
 
     /**
      * Helper method to graphically set the position of a tile
-     * @param xPos
-     * @param yPos
+     * @param xPos bruh
+     * @param yPos ...
      */
     public void setTilePos(int xPos, int yPos) {
         this.myTile.setX(xPos);
@@ -72,26 +80,11 @@ public class MazeTile {
     }
 
     /**
-     * helper method to set/change the color of a tile
-     * @param color
+     * Helper method to set/change the color of a tile
+     * @param color tile color
      */
     public void colorTile(Color color) {
         this.myTile.setFill(color);
     }
-
-    /*
-    //called every step if the motion is discrete, otherwise called every second
-
-    method to color the wall
-        first check distance bw wall and pacman
-        if that's greater than ___, setFill to grey
-        else
-            if isWall then setFill ___
-            else if !isWall then setFill ___
-     */
-
-
-
-
 
 }

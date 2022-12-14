@@ -1,7 +1,5 @@
 package indy;
 
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -17,10 +15,26 @@ public class Pacman {
     private Polygon pacMouth;
     private Pane gamePane;
     private MazeBoard mazeBoard;
+
+    //current direction pacman's moving in
     private Direction currentDirection;
+
+    //stores the direction pacman wants to turn towards, if turning
+    //isn't currently possible
     private Direction intendedDirection;
+
+    //stores the standard 90° rotate transform for this composite shape
     private Rotate standardRotate;
+
+    //stack for backtracking
     private Stack<double[]> backTrackStack;
+
+    /**
+     * constructor that instantiates the whole buncha instance
+     * variables, and graphically sets up pacman
+     * @param gamePane
+     * @param mazeBoard
+     */
     public Pacman(Pane gamePane, MazeBoard mazeBoard) {
         this.pacCircle = new Circle(Constants.PAC_RADIUS, Color.YELLOW);
         this.pacMouth = new Polygon();
@@ -34,9 +48,12 @@ public class Pacman {
         this.setupPac();
     }
 
+    /**
+     * graphically constructs pacman and positions the composite shape in
+     * the game pane
+     */
     private void setupPac() {
         double openMouth = 5.0;
-        //TODO make these constants
 
         this.pacMouth.getPoints().addAll(12.0, 8-openMouth,
                 12.0, 8+openMouth,
@@ -45,13 +62,19 @@ public class Pacman {
 
         this.gamePane.getChildren().addAll(pacCircle, pacMouth);
 
-        this.pacCircle.setCenterX(Constants.TILE_SIZE*2.5); //TODO tweak these
+        this.pacCircle.setCenterX(Constants.TILE_SIZE*2.5);
         this.pacCircle.setCenterY(Constants.TILE_SIZE*2.5);
         this.pacMouth.setLayoutX(Constants.TILE_SIZE*2.5);
         this.pacMouth.setLayoutY(Constants.TILE_SIZE*2.5 - 8);
     }
 
-
+    /**
+     * Updated every moment. checks if motion is possible. if so, it
+     * moves pacman in that direction by a tiny bit. It also checks
+     * if turning is possible – only applicable when the intended
+     * direction isn't null.
+     * Also, constantly checks to see if pacman has won the game
+     */
     public void updatePacman() {
         if (this.checkMotionValidity(this.currentDirection)) {
             this.pacMover(this.currentDirection);
@@ -60,6 +83,10 @@ public class Pacman {
         this.checkPacDub();
     }
 
+    /**
+     * constantly checks for whether pacman has reached the last tile.
+     * If yes, this calls the appropriate method to end the game
+     */
     private void checkPacDub() {
         int[] pacPosInArray;
         double[] pacPos = new double[2];
@@ -74,7 +101,10 @@ public class Pacman {
         }
     }
 
-
+    /**
+     * accessor method to return pacman's position in the array
+     * @return an integer array of size 2
+     */
     public int[] getPosInArray() {
         double[] coords = new double[2];
         coords[0] = this.pacCircle.getCenterX();
@@ -85,8 +115,10 @@ public class Pacman {
 
     /**
      * This method checks whether motion is possible in a given
-     * direction. ie. whether the tile ahead/behind/above/below
-     * pacman is a wall or not.
+     * direction. If the motion is perpendicular, it also includes
+     * a condition to ensure that pacman turns in the middle of the
+     * path, and doesn't straddle the wall. However, this is only
+     * partly successful
      * @param direction the direction for which motion validity
      *                  will be checked
      * @return indicates whether motion is possible or not
@@ -149,6 +181,7 @@ public class Pacman {
                 arrayIndexWall[2], arrayIndexWall[3]);
     }
 
+
     private void checkWallAtTurn() {
         if (this.intendedDirection != null) {
             if (this.checkMotionValidity(this.intendedDirection)) {
@@ -158,7 +191,10 @@ public class Pacman {
         }
     }
 
-
+    /**
+     * handles what to do based on movement relative to current motion.
+     * @param newDirection
+     */
     private void moveLogic(Direction newDirection) {
         if (newDirection == this.currentDirection) {
             this.intendedDirection = null;
@@ -175,7 +211,10 @@ public class Pacman {
         }
     }
 
-
+    /**
+     * method to handle keyinput
+     * @param keyCode
+     */
     public void keyHandler(KeyCode keyCode) {
         switch (keyCode) {
             case RIGHT:
@@ -199,6 +238,9 @@ public class Pacman {
         }
     }
 
+    /**
+     * pushes the current location to the stack
+     */
     private void packBackTrackStack() {
         double[] currentIndex = new double[2];
         currentIndex[0] = this.pacCircle.getCenterX();
@@ -206,6 +248,9 @@ public class Pacman {
         this.backTrackStack.push(currentIndex);
     }
 
+    /**
+     * pops the backtracking stack, and teleports man-pac back
+     */
     private void backTrackStackSubtract() {
         if (!this.backTrackStack.empty()) {
             double[] backTrackIndex = this.backTrackStack.pop();
@@ -216,7 +261,11 @@ public class Pacman {
         }
     }
 
-
+    /**
+     * Helper method that moves pacman's composite figure by a
+     * teensy weensy bit in a certain direction.
+     * @param direction direction of motion
+     */
     private void pacMover(Direction direction) {
         this.rotatePac(direction);
 
@@ -248,6 +297,12 @@ public class Pacman {
         }
     }
 
+    /**
+     * Helper method to rotate pacman to face a certain direction
+     * code is definitely a tad unwieldy. but i wasn't super sure how to
+     * rotate composite shapes without a pane.
+     * @param direction direction of motion
+     */
     private void rotatePac(Direction direction) {
         switch (direction) {
             case RIGHT:
@@ -270,6 +325,5 @@ public class Pacman {
                 break;
         }
     }
-
 
 }

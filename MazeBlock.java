@@ -2,6 +2,11 @@ package indy;
 
 import javafx.scene.layout.Pane;
 
+/**
+ * Parent class for all mazeblocks. has methods to logically
+ * and graphically position the block, rotate it, and to return
+ * if a specific tile is a path.
+ */
 public abstract class MazeBlock {
 
     private final Pane gamePane;

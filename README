@@ -1,32 +1,40 @@
+Indy README
 
-TODO
-    improve ghost motion??
-    maze visibility
-    pacman mouth moving
-    home screen to show instructions + select maze size (affects timer & num of ghosts)
+Overview:
 
-    add konami code easter egg??
+    My 'main' classes are the MazeBoard and Pacman. The former contains the
+    majority of the game's 'logic,' despite not being the top level logic
+    class. Pacman contains the second most complex code because of its
+    continuous motion and user interaction.
 
+    My MazeBoard contains multiple MazeBlocks which are logically arranged
+    to put together a maze. MazeBoard also contains Pacman and Blinky, both
+    of which are associated with the board. This is so they know where the
+    walls are.
+
+    I've commented extensively in the various classes to explain the details
+    of any algorithms I'm implementing.
 
 design choices
 
-    i used a separate child class for each MazeBlock instead of a) interfaces or
-    b) making them within a single method
-    latter cuz, with constraints array, common methods, etc, made more sense to
-    have a distinct class for that. former cuz of more efficient polymorphic code
+    Inheritance is super useful for MazeBlocks – compared to say, interfaces, or
+    a single BlockGenerator class. It provides for very efficient polymorphism
 
-    the maze is procedurally generated starting from the bottom right cuz a) the
-    constraints propagate outwards from there (and b) 'solvability' is more likely
-    if I start from the end block??)
+    I've used 2 enums. One is for the 'inner constraints' of a MazeBlock, and the
+    other is for the direction of movement.
 
-    note: both sets of 2d arrays are in row major
+    The maze is procedurally generated from left to right and up to down in that
+    order, skipping the first and last blocks.
 
-    note: when initializing a block, j and i are switched cuz i'm first setting xPos
-    THEN setting yPos. however, the row-major representation has that the other way round.
+    A 'block' is made up of 9 tiles. A maze is made up of multiple blocks put together
+    logically.
 
-    talk about outer and inner constraints
+    The terms "path" and "way" are used interchangeably.
 
-    defend my choosing of arraylist of generic type object
+    Both sets of 2d arrays are in row major
+
+    Note: when initializing a block, j and i are switched cuz i'm first setting xPos
+    THEN setting yPos. however, the row-major representation has that the other way round
 
     random generation method pretty inefficient ngl. not sure what a better way could be?
 
@@ -37,12 +45,14 @@ design choices
 
 Known Bugs
 
-    pacman does glitch thru walls sometimes
+    Occasioniaally, pacman does glitch through walls/travels in the middle of walls
 
-    pacman starts moving before game loads. not super sure how to deal w that
+    Pacman starts moving before game loads. not super sure how to deal w that
 
-    ghost motion can be goofy
+    Ghost motion is pretty dumb, so it's easy to get caaught in an infinite loop
 
 Debugging Collaborators
 
     none
+
+Time spent: i stopped counting at cartoon rip

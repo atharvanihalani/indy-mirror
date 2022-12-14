@@ -7,6 +7,12 @@ import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
+/**
+ * Blinky but sus. Pretty much all the ghost can do is move
+ * about randomly in the maze. Oh, and kill pacman at will.
+ * It's also associated with MazeBoard – to calculate its
+ * position in the array.
+ */
 public class RedSus {
 
     private Pane gamePane;
@@ -14,6 +20,12 @@ public class RedSus {
     private Direction currentDirection;
     private MazeBoard mazeBoard;
 
+    /**
+     * constructor instantiates instance variables and graphically
+     * sets up blinky
+     * @param gamePane
+     * @param mazeBoard
+     */
     public RedSus(Pane gamePane, MazeBoard mazeBoard) {
         this.gamePane = gamePane;
         this.imposter = new Shape[5];
@@ -23,6 +35,11 @@ public class RedSus {
         this.constructCrewmate();
     }
 
+    /**
+     * graphically sets up and positions beta Blinky
+     * first moves all body parts to the same destination, then
+     * adjuests their relative position.
+     */
     private void constructCrewmate() {
         double tilePosX = (Constants.NUM_COLS)*Constants.TILE_SIZE*3;
         double tilePosY = Constants.NUM_ROWS*Constants.TILE_SIZE*3;
@@ -50,15 +67,21 @@ public class RedSus {
         this.gamePane.getChildren().addAll(this.imposter);
     }
 
+    /**
+     *
+     */
     public void updateSus() {
         if (this.checkMotionValidity(this.currentDirection)) {
             this.vent(this.currentDirection);
         } else {
             this.currentDirection = this.getRandomDirection();
         }
-        //TODO fix motion if got time
     }
 
+    /**
+     * returns a random direction
+     * @return random direction of motion
+     */
     public Direction getRandomDirection() {
         switch ((int) Math.floor(Math.random()*4)) {
             case 0:
@@ -105,15 +128,25 @@ public class RedSus {
                 arrayIndexWall[2], arrayIndexWall[3]);
     }
 
+    /**
+     * Helper method that returns blinky's position both 2-d arrays
+     * @return an array of 4 integers. first two being coordinates of
+     * the block array; the latter two being the coordinates of the
+     * tile array.
+     */
     public int[] getPosInArray() {
         double[] coords = new double[2];
         coords[0] = this.imposter[0].getLayoutX();
         coords[1] = this.imposter[0].getLayoutY();
 
         return this.mazeBoard.checkPosInArray(coords);
-
     }
 
+    /**
+     * exactly the same as pacman's movePac() method
+     * simply moves blinky in a particular direction by a smidgen.
+     * @param direction
+     */
     private void vent(Direction direction) {
         switch (direction) {
             case RIGHT:

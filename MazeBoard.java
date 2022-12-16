@@ -40,6 +40,9 @@ public class MazeBoard {
         //these are set up last in order to show up on top of the gamepane
         this.pacman = new Pacman(this.gamePane, this);
         this.redSus = new RedSus(this.gamePane, this);
+
+
+
     }
 
     /**
@@ -466,6 +469,7 @@ public class MazeBoard {
         this.pacman.updatePacman();
         this.redSus.updateSus();
         this.checkCollision();
+        this.updateBlockLighting();
     }
 
     /**
@@ -557,4 +561,111 @@ public class MazeBoard {
             this.gameOver = true;
         }
     }
+
+    //called every time a helper method detects that the tile has changed
+    public void updateBlockLighting() {
+        /*
+        set all blocks to black at the setup
+
+        illuminate the 5x5 block grid around pacman & ensure that the border
+        square surrounding the 7x7 is all black
+
+         */
+
+        int[] pacPos = this.pacman.getPosInArray();
+
+//        int[] pacPos = new int[]{0, 0, 0, 2};
+        int[] initialPacPos = new int[4];
+        System.arraycopy(pacPos, 0, initialPacPos, 0, 4);
+        int[] finalPacPos = new int[4];
+        System.arraycopy(pacPos, 0, finalPacPos, 0, 4);
+
+        if (initialPacPos[0] == 0) {
+            initialPacPos[2] = 0;
+            finalPacPos[0]++;
+            System.out.println("case 1");
+        } else if (initialPacPos[0] == Constants.NUM_ROWS-1) {
+            initialPacPos[0]--;
+            finalPacPos[2] = 2;
+            System.out.println("case 2");
+        } else {
+            initialPacPos[0]--;
+            finalPacPos[0]++;
+            System.out.println("case 3");
+        }
+
+        if (initialPacPos[1] == 0) {
+            initialPacPos[3] = 0;
+            finalPacPos[1]++;
+            System.out.println("case 1");
+        } else if (initialPacPos[1] == Constants.NUM_COLS-1) {
+            initialPacPos[1]--;
+            finalPacPos[3] = 2;
+            System.out.println("case 2");
+        } else {
+            initialPacPos[1]--;
+            finalPacPos[1]++;
+            System.out.println("case 3");
+        }
+
+        int[] currentPacPos = new int[4];
+        System.arraycopy(initialPacPos, 0, currentPacPos, 0, 4);
+        /*
+        at this point, we have three arrays.
+        initialPacPos stores the coordinates of the initial tile the next loop
+        will start iterating from.
+        finalPacPos stores the coordinates of the final tile the loop will be
+        iterating till.
+        currentPacPos stores the constantly changing value of the tile while the
+        loop iterates through them all.
+         */
+
+
+        int horizontalLength = 3*(finalPacPos[1] - initialPacPos[1]);
+        horizontalLength = horizontalLength + (finalPacPos[3] - initialPacPos[3]) + 1;
+        int verticalLength = 3*(finalPacPos[0] - initialPacPos[0]);
+        verticalLength = verticalLength + (finalPacPos[2] - initialPacPos[2]) + 1;
+
+        for (int i = 0; i < horizontalLength*verticalLength; i++) {
+
+            System.out.println("iteration count: " + i);
+
+            int[] tempTileArray = new int[]{currentPacPos[2], currentPacPos[3]};
+            this.blockArray[currentPacPos[0]][currentPacPos[1]].setTilesVisibility(tempTileArray);
+
+            currentPacPos = this.getNextLightingTile(currentPacPos, initialPacPos, finalPacPos);
+        }
+    }
+
+    private int[] getNextLightingTile(int[] currentArray, int[] initialArray, int[] finalArray) {
+
+        int[] nextArray = new int[4];
+        System.arraycopy(currentArray, 0, nextArray, 0, nextArray.length);
+
+        //checks if it's at the end of a row
+        if ((nextArray[1] == finalArray[1]) && (nextArray[3] == finalArray[3])) {
+            nextArray[1] = initialArray[1];
+            nextArray[3] = initialArray[3];
+
+            //increment row position while checking for block border
+            if (nextArray[2] == 2) {
+                nextArray[0]++;
+                nextArray[2] = 0;
+            } else {
+                nextArray[2]++;
+            }
+            return nextArray;
+        }
+
+        //goes to the next column, checking for the border of a block
+        if (nextArray[3] == 2) {
+            nextArray[1]++;
+            nextArray[3] = 0;
+        } else {
+            nextArray[3]++;
+        }
+        return nextArray;
+
+    }
+
 }

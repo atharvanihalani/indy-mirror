@@ -1,6 +1,7 @@
 package indy;
 
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 
 /**
  * Parent class for all mazeblocks. has methods to logically
@@ -100,5 +101,11 @@ public abstract class MazeBlock {
     }
 
 
+    public void setTilesVisibility(int[] mazeTile) {
+
+        this.tileArray[mazeTile[0]][mazeTile[1]].colorTile(Color.AQUA);
+
+
+    }
 
 }

@@ -103,7 +103,7 @@ public class Pacman {
 
     /**
      * accessor method to return pacman's position in the array
-     * @return an integer array of size 2
+     * @return an integer array of size 4
      */
     public int[] getPosInArray() {
         double[] coords = new double[2];

@@ -54,17 +54,21 @@ public class MazeBoard {
 
         //loop that sets up both horizontal walls simultaneously
         for (int i = 0; i <= Constants.NUM_COLS *3; i++) {
-            new MazeTile(this.gamePane, true, i*Constants.TILE_SIZE, 0);
-            new MazeTile(this.gamePane, true, (i+1)*Constants.TILE_SIZE,
+            MazeTile topRow = new MazeTile(this.gamePane, true, i*Constants.TILE_SIZE, 0);
+            topRow.resetColor();
+            MazeTile bottomRow = new MazeTile(this.gamePane, true, (i+1)*Constants.TILE_SIZE,
                     ((Constants.NUM_ROWS*3)+1)*Constants.TILE_SIZE);
+            bottomRow.resetColor();
         }
 
         //loop that sets up both vertical walls simultaneously
         for (int i = 0; i <= Constants.NUM_ROWS*3; i++) {
-            new MazeTile(this.gamePane, true, 0, (i+1)*Constants.TILE_SIZE);
-            new MazeTile(this.gamePane, true,
+            MazeTile leftCol = new MazeTile(this.gamePane, true, 0, (i+1)*Constants.TILE_SIZE);
+            leftCol.resetColor();
+            MazeTile rightCol = new MazeTile(this.gamePane, true,
                     ((Constants.NUM_COLS *3)+1)*Constants.TILE_SIZE,
                     i*Constants.TILE_SIZE);
+            rightCol.resetColor();
         }
     }
 
@@ -469,7 +473,7 @@ public class MazeBoard {
         this.pacman.updatePacman();
         this.redSus.updateSus();
         this.checkCollision();
-        this.updateBlockLighting();
+        this.updateMazeLighting();
     }
 
     /**
@@ -562,50 +566,157 @@ public class MazeBoard {
         }
     }
 
-    //called every time a helper method detects that the tile has changed
-    public void updateBlockLighting() {
-        /*
-        set all blocks to black at the setup
 
-        illuminate the 5x5 block grid around pacman & ensure that the border
-        square surrounding the 7x7 is all black
+    //TODO SHOULD BE called every time a helper method detects that the tile has changed
 
-         */
+    /**
+     * This calls two methods.
+     * The first sets a 7x7 box of tiles (centred around pacman) to
+     * be invisible.
+     * The second sets a 5x5 box of tiles (centred around pacman) to
+     * be visible.
+     * The effect is, that a visibility box follows pacman along with
+     * its movement.
+     * Note: both methods make a box that stops at the border. ie. the
+     * border remains visible no matter where pacman is.
+     */
+    public void updateMazeLighting() {
+        this.setLightingBlack();
+        this.setLightingVisible();
+    }
+
+    public void setLightingVisible() {
 
         int[] pacPos = this.pacman.getPosInArray();
 
-//        int[] pacPos = new int[]{0, 0, 0, 2};
         int[] initialPacPos = new int[4];
         System.arraycopy(pacPos, 0, initialPacPos, 0, 4);
         int[] finalPacPos = new int[4];
         System.arraycopy(pacPos, 0, finalPacPos, 0, 4);
 
-        if (initialPacPos[0] == 0) {
+        if (pacPos[0] == 0) {
             initialPacPos[2] = 0;
-            finalPacPos[0]++;
-            System.out.println("case 1");
-        } else if (initialPacPos[0] == Constants.NUM_ROWS-1) {
-            initialPacPos[0]--;
+
+            if (finalPacPos[2] == 0) {
+                finalPacPos[2] = 2;
+            } else {
+                finalPacPos[0]++;
+                finalPacPos[2]--;
+            }
+        } else if (pacPos[0] == Constants.NUM_ROWS - 1) {
+            if (initialPacPos[2] == 2) {
+                initialPacPos[2] = 0;
+            } else {
+                initialPacPos[0]--;
+                initialPacPos[2]++;
+            }
+
             finalPacPos[2] = 2;
-            System.out.println("case 2");
         } else {
-            initialPacPos[0]--;
-            finalPacPos[0]++;
-            System.out.println("case 3");
+            if (initialPacPos[2] == 2) {
+                initialPacPos[2] = 0;
+            } else {
+                initialPacPos[0]--;
+                initialPacPos[2]++;
+            }
+
+            if (finalPacPos[2] == 0) {
+                finalPacPos[2] = 2;
+            } else {
+                finalPacPos[0]++;
+                finalPacPos[2]--;
+            }
         }
 
-        if (initialPacPos[1] == 0) {
+
+        if (pacPos[1] == 0) {
+            initialPacPos[3] = 0;
+
+            if (finalPacPos[3] == 0) {
+                finalPacPos[3] = 2;
+            } else {
+                finalPacPos[1]++;
+                finalPacPos[3]--;
+            }
+        } else if (pacPos[1] == Constants.NUM_COLS - 1) {
+            if (initialPacPos[3] == 2) {
+                initialPacPos[3] = 0;
+            } else {
+                initialPacPos[1]--;
+                initialPacPos[3]++;
+            }
+
+            finalPacPos[3] = 2;
+        } else {
+            if (initialPacPos[3] == 2) {
+                initialPacPos[3] = 0;
+            } else {
+                initialPacPos[1]--;
+                initialPacPos[3]++;
+            }
+
+            if (finalPacPos[3] == 0) {
+                finalPacPos[3] = 2;
+            } else {
+                finalPacPos[1]++;
+                finalPacPos[3]--;
+            }
+        }
+
+        int[] currentPacPos = new int[4];
+        System.arraycopy(initialPacPos, 0, currentPacPos, 0, 4);
+
+        int horizontalLength = 3*(finalPacPos[1] - initialPacPos[1]);
+        horizontalLength = horizontalLength + (finalPacPos[3] - initialPacPos[3]) + 1;
+        int verticalLength = 3*(finalPacPos[0] - initialPacPos[0]);
+        verticalLength = verticalLength + (finalPacPos[2] - initialPacPos[2]) + 1;
+
+        for (int i = 0; i < horizontalLength*verticalLength; i++) {
+
+            System.out.println("iteration count light: " + i);
+
+            int[] tempTileArray = new int[]{currentPacPos[2], currentPacPos[3]};
+            this.blockArray[currentPacPos[0]][currentPacPos[1]].setTilesVisibility(tempTileArray, true);
+
+            currentPacPos = this.getNextLightingTile(currentPacPos, initialPacPos, finalPacPos);
+        }
+    }
+
+    public void setLightingBlack() {
+        /*
+        set all blocks to black at the setup
+
+        illuminate the 5x5 block grid around pacman & ensure that the border
+        square surrounding the 7x7 is all black
+         */
+
+        int[] pacPos = this.pacman.getPosInArray();
+
+        int[] initialPacPos = new int[4];
+        System.arraycopy(pacPos, 0, initialPacPos, 0, 4);
+        int[] finalPacPos = new int[4];
+        System.arraycopy(pacPos, 0, finalPacPos, 0, 4);
+
+        if (pacPos[0] == 0) {
+            initialPacPos[2] = 0;
+            finalPacPos[0]++;
+        } else if (pacPos[0] == Constants.NUM_ROWS - 1) {
+            initialPacPos[0]--;
+            finalPacPos[2] = 2;
+        } else {
+            initialPacPos[0]--;
+            finalPacPos[0]++;
+        }
+
+        if (pacPos[1] == 0) {
             initialPacPos[3] = 0;
             finalPacPos[1]++;
-            System.out.println("case 1");
-        } else if (initialPacPos[1] == Constants.NUM_COLS-1) {
+        } else if (pacPos[1] == Constants.NUM_COLS - 1) {
             initialPacPos[1]--;
             finalPacPos[3] = 2;
-            System.out.println("case 2");
         } else {
             initialPacPos[1]--;
             finalPacPos[1]++;
-            System.out.println("case 3");
         }
 
         int[] currentPacPos = new int[4];
@@ -620,7 +731,6 @@ public class MazeBoard {
         loop iterates through them all.
          */
 
-
         int horizontalLength = 3*(finalPacPos[1] - initialPacPos[1]);
         horizontalLength = horizontalLength + (finalPacPos[3] - initialPacPos[3]) + 1;
         int verticalLength = 3*(finalPacPos[0] - initialPacPos[0]);
@@ -628,10 +738,10 @@ public class MazeBoard {
 
         for (int i = 0; i < horizontalLength*verticalLength; i++) {
 
-            System.out.println("iteration count: " + i);
+            System.out.println("iteration count dark: " + i);
 
             int[] tempTileArray = new int[]{currentPacPos[2], currentPacPos[3]};
-            this.blockArray[currentPacPos[0]][currentPacPos[1]].setTilesVisibility(tempTileArray);
+            this.blockArray[currentPacPos[0]][currentPacPos[1]].setTilesVisibility(tempTileArray, false);
 
             currentPacPos = this.getNextLightingTile(currentPacPos, initialPacPos, finalPacPos);
         }

@@ -101,10 +101,13 @@ public abstract class MazeBlock {
     }
 
 
-    public void setTilesVisibility(int[] mazeTile) {
+    public void setTilesVisibility(int[] mazeTile, boolean isVisible) {
 
-        this.tileArray[mazeTile[0]][mazeTile[1]].colorTile(Color.AQUA);
-
+        if (isVisible) {
+            this.tileArray[mazeTile[0]][mazeTile[1]].resetColor();
+        } else {
+            this.tileArray[mazeTile[0]][mazeTile[1]].colorTile(Color.BLACK);
+        }
 
     }
 

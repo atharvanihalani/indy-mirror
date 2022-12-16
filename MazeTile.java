@@ -25,6 +25,7 @@ public class MazeTile {
         this.myTile = new Rectangle(Constants.TILE_SIZE, Constants.TILE_SIZE);
 
         this.gamePane.getChildren().add(this.myTile);
+        this.colorTile(Color.BLACK);
     }
 
     /**
@@ -42,6 +43,7 @@ public class MazeTile {
         this.myTile = new Rectangle(Constants.TILE_SIZE, Constants.TILE_SIZE);
 
         this.gamePane.getChildren().add(this.myTile);
+        this.colorTile(Color.BLACK);
         this.setIsWall(this.isWall);
         this.setTilePos(xPos, yPos);
     }
@@ -53,7 +55,9 @@ public class MazeTile {
      */
     public void setIsWall(boolean isWall) {
         this.isWall = isWall;
+    }
 
+    public void resetColor() {
         if (this.isWall) {
             this.colorTile(Constants.WALL_COLOR);
         } else {

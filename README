@@ -1,5 +1,7 @@
 Indy README
 
+TODO factor code out in mazeboard!!!
+
 Overview:
 
     My 'main' classes are the MazeBoard and Pacman. The former contains the

@@ -113,6 +113,10 @@ public class Pacman {
         return this.mazeBoard.checkPosInArray(coords);
     }
 
+    public double[] getPos() {
+        return new double[]{this.pacCircle.getCenterX(), this.pacCircle.getCenterY()};
+    }
+
     /**
      * This method checks whether motion is possible in a given
      * direction. If the motion is perpendicular, it also includes

@@ -26,11 +26,15 @@ public class MazeBoard {
     private Pacman pacman;
     private RedSus redSus;
     private boolean gameOver; //boolean indicating if the game is over or not
+    private int[] pacmanCurrentTile;
+    private int[] ghostCurrentTile;
 
     public MazeBoard(Pane gamePane) {
         this.gamePane = gamePane;
         this.blockArray = new MazeBlock[Constants.NUM_ROWS][Constants.NUM_COLS];
         this.gameOver = false;
+        this.pacmanCurrentTile = new int[4];
+        this.ghostCurrentTile = new int[4];
 
         this.setupBorder();
         this.setupFirstBlock();
@@ -40,7 +44,6 @@ public class MazeBoard {
         //these are set up last in order to show up on top of the gamepane
         this.pacman = new Pacman(this.gamePane, this);
         this.redSus = new RedSus(this.gamePane, this);
-
 
 
     }
@@ -473,7 +476,10 @@ public class MazeBoard {
         this.pacman.updatePacman();
         this.redSus.updateSus();
         this.checkCollision();
-        this.updateMazeLighting();
+        this.updateGhostVisibility();
+        if (hasSmtnMoved()) {
+            this.updateMazeLighting();
+        }
     }
 
     /**
@@ -567,7 +573,34 @@ public class MazeBoard {
     }
 
 
-    //TODO SHOULD BE called every time a helper method detects that the tile has changed
+    public boolean hasSmtnMoved() {
+        int[] updatedTilePac = this.pacman.getPosInArray();
+        int[] updatedTileGhost = this.redSus.getPosInArray();
+        if (!Arrays.equals(this.pacmanCurrentTile, updatedTilePac)) {
+            this.pacmanCurrentTile = updatedTilePac;
+            return true;
+        }
+        if (!Arrays.equals(this.ghostCurrentTile, updatedTileGhost)) {
+            this.ghostCurrentTile = updatedTileGhost;
+            return true;
+        }
+        return false;
+    }
+
+
+    public void updateGhostVisibility() {
+        double[] ghostCoords = this.redSus.getPos();
+        double[] pacCoords = this.pacman.getPos();
+
+        if ((Math.abs(ghostCoords[0]-pacCoords[0]) < 62.5) &&
+                (Math.abs(ghostCoords[1]-pacCoords[1]) < 62.5)) {
+            this.redSus.makeVisible(true);
+        } else {
+            this.redSus.makeVisible(false);
+        }
+
+    }
+
 
     /**
      * This calls two methods.

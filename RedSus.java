@@ -67,9 +67,20 @@ public class RedSus {
         this.gamePane.getChildren().addAll(this.imposter);
     }
 
-    /**
-     *
-     */
+    public void makeVisible(boolean isVisible) {
+        if (isVisible) {
+            for (Shape bodyPart : this.imposter) {
+                bodyPart.setFill(Color.RED);
+            }
+            this.imposter[4].setFill(Color.LIGHTBLUE);
+        } else {
+            for (Shape bodyPart : this.imposter) {
+                bodyPart.setFill(Color.BLACK);
+            }
+        }
+    }
+
+
     public void updateSus() {
         if (this.checkMotionValidity(this.currentDirection)) {
             this.vent(this.currentDirection);
@@ -140,6 +151,10 @@ public class RedSus {
         coords[1] = this.imposter[0].getLayoutY();
 
         return this.mazeBoard.checkPosInArray(coords);
+    }
+
+    public double[] getPos() {
+        return new double[]{this.imposter[0].getLayoutX(), this.imposter[0].getLayoutY()};
     }
 
     /**

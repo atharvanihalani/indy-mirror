@@ -7,8 +7,8 @@ public class Constants {
 
 
     public static final int TILE_SIZE = 25;
-    public static final int NUM_ROWS = 5;
-    public static final int NUM_COLS = 5;
+    public static final int NUM_ROWS = 3;
+    public static final int NUM_COLS = 7;
     public static final int QUIT_PANE_HEIGHT = 35;
     public static final int TIMER_PANE_HEIGHT = 50;
 

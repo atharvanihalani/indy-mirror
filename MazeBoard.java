@@ -706,8 +706,6 @@ public class MazeBoard {
 
         for (int i = 0; i < horizontalLength*verticalLength; i++) {
 
-            System.out.println("iteration count light: " + i);
-
             int[] tempTileArray = new int[]{currentPacPos[2], currentPacPos[3]};
             this.blockArray[currentPacPos[0]][currentPacPos[1]].setTilesVisibility(tempTileArray, true);
 
@@ -770,8 +768,6 @@ public class MazeBoard {
         verticalLength = verticalLength + (finalPacPos[2] - initialPacPos[2]) + 1;
 
         for (int i = 0; i < horizontalLength*verticalLength; i++) {
-
-            System.out.println("iteration count dark: " + i);
 
             int[] tempTileArray = new int[]{currentPacPos[2], currentPacPos[3]};
             this.blockArray[currentPacPos[0]][currentPacPos[1]].setTilesVisibility(tempTileArray, false);

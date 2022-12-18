@@ -14,13 +14,13 @@ import javafx.scene.layout.Pane;
  * Has a getRoot() method.
  * Same old, same old.
  */
-public class PaneOrganizer {
+public class MainPaneOrganizer {
 
     private BorderPane root;
     private Pane gamePane;
     private Label timerLabel;
 
-    public PaneOrganizer() {
+    public MainPaneOrganizer(App myApp) {
         this.gamePane = new Pane();
         this.root = new BorderPane(this.gamePane);
         this.timerLabel = new Label();
@@ -37,15 +37,22 @@ public class PaneOrganizer {
     private void createQuitBar() {
         HBox quitBox = new HBox();
         Button quitButton = new Button("Quit");
+        Button restartButton = new Button("Restart");
 
         quitButton.setOnAction((ActionEvent e) -> System.exit(0));
         quitButton.setFocusTraversable(false);
+        restartButton.setOnAction((ActionEvent e) -> this.onRestart());
+        restartButton.setFocusTraversable(false);
         quitBox.setPrefSize(Constants.SCENE_WIDTH, Constants.QUIT_PANE_HEIGHT);
         quitBox.setStyle("-fx-background-color: #DCDCDC");
-        quitBox.getChildren().add(quitButton);
+        quitBox.getChildren().addAll(quitButton, restartButton);
         quitBox.setAlignment(Pos.CENTER);
 
         this.root.setBottom(quitBox);
+    }
+
+    private void onRestart() {
+        System.out.println("restarted");
     }
 
     /**

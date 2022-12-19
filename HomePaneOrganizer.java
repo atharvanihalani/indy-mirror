@@ -51,9 +51,10 @@ public class HomePaneOrganizer {
         startButton.setLayoutY(240);
     }
 
-    private boolean checkInput() {
-        CharSequence sizeChars = this.inputWidth.getCharacters();
+    private boolean checkInput(TextField inputField, boolean isWidth) {
+        CharSequence sizeChars = inputField.getCharacters();
         int[] sizeNum = new int[sizeChars.length()];
+
         for (int i = 0; i < sizeChars.length(); i++) {
 
             if (!Character.isDigit(sizeChars.charAt(i))) {
@@ -70,13 +71,23 @@ public class HomePaneOrganizer {
             return false;
         }
 
-        Constants.NUM_COLS = sizeNum[0];
+        if (isWidth) {
+            Constants.NUM_COLS = sizeNum[0];
+        } else {
+            Constants.NUM_ROWS = sizeNum[0];
+        }
 
         return true;
     }
 
     private void startGame() {
-        if (this.checkInput()) {
+        if (this.checkInput(this.inputWidth, true) &&
+                this.checkInput(this.inputHeight, false)) {
+            Constants.SCENE_WIDTH = (Constants.NUM_COLS*3 + 2)*Constants.TILE_SIZE;
+            Constants.SCENE_HEIGHT  = (Constants.NUM_ROWS*3 + 2)*Constants.TILE_SIZE +
+                    Constants.QUIT_PANE_HEIGHT + Constants.TIMER_PANE_HEIGHT;
+            Constants.TIMER_COUNT  = Constants.NUM_COLS*Constants.NUM_ROWS*2;
+
             this.myApp.changeScene();
         }
     }

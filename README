@@ -1,6 +1,9 @@
 Indy README
 
-TODO factor code out in mazeboard!!!
+TODO
+    factor code out in mazeboard!!!
+    add decent graphics (esp for homescreen)
+    fix glitches
 
 Overview:
 
@@ -59,5 +62,3 @@ Debugging Collaborators
 
 Time spent: i stopped counting at cartoon rip
 
-
-TODO make stuff not visible

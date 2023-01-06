@@ -1,7 +1,6 @@
 package indy;
 
 import javafx.application.Application;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 
@@ -29,11 +28,19 @@ public class App extends Application {
         stage.show();
     }
 
-    public void changeScene() {
+
+    public void loadGameScene() {
         MainPaneOrganizer myPaneOrg = new MainPaneOrganizer(this);
         Scene myScene = new Scene(myPaneOrg.getRoot(), Constants.SCENE_WIDTH, Constants.SCENE_HEIGHT);
         this.myStage.setScene(myScene);
         this.myStage.setTitle("ur mom");
+    }
+
+    public void loadHomeScreen() {
+        HomePaneOrganizer myPaneOrg = new HomePaneOrganizer(this);
+        Scene homeScene = new Scene(myPaneOrg.getRoot(), 300, 300);
+        this.myStage.setScene(homeScene);
+        this.myStage.setTitle("home scene");
     }
 
     public static void main(String[] args) {

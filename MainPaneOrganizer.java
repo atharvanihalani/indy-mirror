@@ -19,13 +19,15 @@ public class MainPaneOrganizer {
     private BorderPane root;
     private Pane gamePane;
     private Label timerLabel;
+    private IndyGame myIndyGame;
+    private App myApp;
 
     public MainPaneOrganizer(App myApp) {
         this.gamePane = new Pane();
         this.root = new BorderPane(this.gamePane);
         this.timerLabel = new Label();
-
-        new IndyGame(this.gamePane, this.timerLabel);
+        this.myIndyGame = new IndyGame(this.gamePane, this.timerLabel);
+        this.myApp = myApp;
 
         this.createQuitBar();
         this.createTimerBar();
@@ -53,6 +55,8 @@ public class MainPaneOrganizer {
 
     private void onRestart() {
         System.out.println("restarted");
+        this.myIndyGame.stopGame();
+        this.myApp.loadHomeScreen();
     }
 
     /**

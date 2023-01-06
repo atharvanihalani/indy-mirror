@@ -108,7 +108,18 @@ public abstract class MazeBlock {
         } else {
             this.tileArray[mazeTile[0]][mazeTile[1]].colorTile(Color.BLACK);
         }
+    }
 
+    /**
+     * TEST method to set all tiles in the block visible
+     * TODO delete
+     */
+    public void setAllTilesVisible() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                this.tileArray[i][j].resetColor();
+            }
+        }
     }
 
 }

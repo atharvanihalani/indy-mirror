@@ -25,6 +25,7 @@ public class MazeTile {
         this.myTile = new Rectangle(Constants.TILE_SIZE, Constants.TILE_SIZE);
 
         this.gamePane.getChildren().add(this.myTile);
+        this.resetColor();
         this.colorTile(Color.BLACK);
     }
 
@@ -89,6 +90,10 @@ public class MazeTile {
      */
     public void colorTile(Color color) {
         this.myTile.setFill(color);
+    }
+
+    public void addOffsets() {
+        this.myTile.setStroke(Color.BLUE);
     }
 
 }

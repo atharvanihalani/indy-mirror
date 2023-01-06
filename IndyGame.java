@@ -87,9 +87,13 @@ public class IndyGame {
      */
     private void ifGameOver() {
         if (this.mazeBoard.getGameOver()) {
-            this.gameTimeline.stop();
-            this.timerTimeline.stop();
+            this.stopGame();
         }
+    }
+
+    public void stopGame() {
+        this.gameTimeline.stop();
+        this.timerTimeline.stop();
     }
 
 }

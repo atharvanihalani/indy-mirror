@@ -19,6 +19,8 @@ public class RedSus {
     private Shape[] imposter;
     private Direction currentDirection;
     private MazeBoard mazeBoard;
+    private Color myColor;
+    private int[] startTile;
 
     /**
      * constructor instantiates instance variables and graphically
@@ -26,11 +28,14 @@ public class RedSus {
      * @param gamePane
      * @param mazeBoard
      */
-    public RedSus(Pane gamePane, MazeBoard mazeBoard) {
+    public RedSus(Pane gamePane, MazeBoard mazeBoard, Color myColor, int[] startTile) {
         this.gamePane = gamePane;
         this.imposter = new Shape[5];
         this.currentDirection = Direction.LEFT;
         this.mazeBoard = mazeBoard;
+        this.myColor = myColor;
+        this.startTile = startTile;
+
 
         this.constructCrewmate();
     }
@@ -41,20 +46,31 @@ public class RedSus {
      * adjuests their relative position.
      */
     private void constructCrewmate() {
-        double tilePosX = (Constants.NUM_COLS)*Constants.TILE_SIZE*3;
-        double tilePosY = Constants.NUM_ROWS*Constants.TILE_SIZE*3;
-        this.imposter[0] = new Rectangle(16, 8, Color.RED);
-        this.imposter[1] = new Rectangle(6, 8, Color.RED);
-        this.imposter[2] = new Rectangle(6, 8, Color.RED);
-        this.imposter[3] = new Circle(8, Color.RED);
+        this.setColor();
+        this.placeOnGrid();
+
+        this.gamePane.getChildren().addAll(this.imposter);
+    }
+
+    private void setColor() {
+        this.imposter[0] = new Rectangle(16, 8, this.myColor);
+        this.imposter[1] = new Rectangle(6, 8, this.myColor);
+        this.imposter[2] = new Rectangle(6, 8, this.myColor);
+        this.imposter[3] = new Circle(8, this.myColor);
         this.imposter[4] = new Ellipse(6, 4);
         this.imposter[4].setFill(Color.LIGHTBLUE);
+    }
+
+    private void placeOnGrid() {
+        int tilePosX = startTile[0];
+        int tilePosY = startTile[1];
 
         for (Shape bodyPart : this.imposter) {
             bodyPart.setLayoutX(tilePosX);
             bodyPart.setLayoutY(tilePosY);
         }
 
+        //relative positioning of each body part
         this.imposter[0].setLayoutY(this.imposter[0].getLayoutY() - 16);
         this.imposter[1].setLayoutY(this.imposter[1].getLayoutY() - 8);
         this.imposter[2].setLayoutY(this.imposter[2].getLayoutY() - 8);
@@ -63,14 +79,12 @@ public class RedSus {
         this.imposter[3].setLayoutX(this.imposter[3].getLayoutX() + 8);
         this.imposter[4].setLayoutY(this.imposter[4].getLayoutY() - 16);
         this.imposter[4].setLayoutX(this.imposter[4].getLayoutX() + 8);
-
-        this.gamePane.getChildren().addAll(this.imposter);
     }
 
-    public void makeVisible(boolean isVisible) {
+    public void toggleVisibility(boolean isVisible) {
         if (isVisible) {
             for (Shape bodyPart : this.imposter) {
-                bodyPart.setFill(Color.RED);
+                bodyPart.setFill(this.myColor);
             }
             this.imposter[4].setFill(Color.LIGHTBLUE);
         } else {
@@ -81,7 +95,7 @@ public class RedSus {
     }
 
 
-    public void updateSus() {
+    public void updateSusMovement() {
         if (this.checkMotionValidity(this.currentDirection)) {
             this.vent(this.currentDirection);
         } else {

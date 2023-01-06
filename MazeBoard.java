@@ -24,10 +24,11 @@ public class MazeBoard {
     private Pane gamePane;
     private MazeBlock[][] blockArray;
     private Pacman pacman;
-    private RedSus redSus;
+    private ArrayList<RedSus> suspectList;
     private boolean gameOver; //boolean indicating if the game is over or not
     private int[] pacmanCurrentTile;
     private int[] ghostCurrentTile;
+    private int iterationCount;
 
     public MazeBoard(Pane gamePane) {
         this.gamePane = gamePane;
@@ -35,17 +36,38 @@ public class MazeBoard {
         this.gameOver = false;
         this.pacmanCurrentTile = new int[4];
         this.ghostCurrentTile = new int[4];
+        this.iterationCount = 0;
+        this.suspectList = new ArrayList<>();
 
         this.setupBorder();
         this.setupFirstBlock();
         this.setupExit();
         this.setupMaze();
 
+
         //these are set up last in order to show up on top of the gamepane
         this.pacman = new Pacman(this.gamePane, this);
-        this.redSus = new RedSus(this.gamePane, this);
+        this.findSuspects();
+        this.setAllLightsVisible();
+    }
 
+    private void findSuspects() {
+        int mazeSize = Constants.NUM_COLS * Constants.NUM_ROWS;
 
+        int[] bottomRightTile = {Constants.NUM_COLS*Constants.TILE_SIZE*3,
+                Constants.NUM_ROWS*Constants.TILE_SIZE*3};
+        int[] topRightTile = {Constants.NUM_COLS*Constants.TILE_SIZE*3,
+                Constants.TILE_SIZE*3};
+        int[] bottomLeftTile = {Constants.TILE_SIZE*3,
+                Constants.NUM_ROWS*Constants.TILE_SIZE*3};
+
+        this.suspectList.add(new RedSus(this.gamePane, this, Color.RED, bottomRightTile));
+        if (mazeSize > 30) {
+            this.suspectList.add(new RedSus(this.gamePane, this, Color.CYAN, bottomLeftTile));
+        }
+        if (mazeSize > 60) {
+            this.suspectList.add(new RedSus(this.gamePane, this, Color.HOTPINK, topRightTile));
+        }
     }
 
     /**
@@ -133,6 +155,8 @@ public class MazeBoard {
         for (int i = 0; i < Constants.NUM_ROWS; i++) {
             for (int j = 0; j < Constants.NUM_COLS; j++) {
 
+                System.out.println(this.iterationCount++);
+
                 //ensures we don't replace the first or last block
                 if ((i == 0 && j == 0) || (i == Constants.NUM_ROWS - 1 &&
                         j == Constants.NUM_COLS-1)) {
@@ -196,6 +220,7 @@ public class MazeBoard {
                         j--;
                     }
                 }
+                System.out.println("");
             }
         }
     }
@@ -474,11 +499,31 @@ public class MazeBoard {
      */
     public void updateBoard() {
         this.pacman.updatePacman();
-        this.redSus.updateSus();
+        for (RedSus myGhost : this.suspectList) {
+            myGhost.updateSusMovement();
+        }
         this.checkCollision();
+        /*
         this.updateGhostVisibility();
         if (hasSmtnMoved()) {
             this.updateMazeLighting();
+        }
+
+         */
+    }
+
+    /**
+     * TEST method to set the entire maze to be visible
+     * TODO remove
+     */
+    private void setAllLightsVisible() {
+        for (int i = 0; i < Constants.NUM_ROWS; i++) {
+            for (int j = 0; j < Constants.NUM_COLS; j++) {
+                this.blockArray[i][j].setAllTilesVisible();
+            }
+        }
+        for (RedSus myGhost : this.suspectList) {
+            myGhost.toggleVisibility(true);
         }
     }
 
@@ -559,45 +604,53 @@ public class MazeBoard {
      */
     public void checkCollision() {
         int[] pacPos = this.pacman.getPosInArray();
-        int[] redPos = this.redSus.getPosInArray();
+        for (int i = 0; i < this.suspectList.size(); i++) {
+            int[] ghostPos = this.suspectList.get(i).getPosInArray();
 
-        if (Arrays.equals(pacPos, redPos)) {
-            System.out.println("dead ass. deadass.");
-            Image killScreen = new Image("./indy/amogushaha.png", Constants.SCENE_WIDTH,
-                    Constants.SCENE_HEIGHT - Constants.QUIT_PANE_HEIGHT -
-                            Constants.TIMER_PANE_HEIGHT, false, true);
-            ImageView deadView = new ImageView(killScreen);
-            this.gamePane.getChildren().add(deadView);
-            this.gameOver = true;
+            if (Arrays.equals(pacPos, ghostPos)) {
+                System.out.println("dead ass. deadass.");
+                Image killScreen = new Image("./indy/amogushaha.png", Constants.SCENE_WIDTH,
+                        Constants.SCENE_HEIGHT - Constants.QUIT_PANE_HEIGHT -
+                                Constants.TIMER_PANE_HEIGHT, false, true);
+                ImageView deadView = new ImageView(killScreen);
+                this.gamePane.getChildren().add(deadView);
+                this.gameOver = true;
+            }
         }
     }
 
 
     public boolean hasSmtnMoved() {
         int[] updatedTilePac = this.pacman.getPosInArray();
-        int[] updatedTileGhost = this.redSus.getPosInArray();
-        if (!Arrays.equals(this.pacmanCurrentTile, updatedTilePac)) {
-            this.pacmanCurrentTile = updatedTilePac;
-            return true;
-        }
-        if (!Arrays.equals(this.ghostCurrentTile, updatedTileGhost)) {
-            this.ghostCurrentTile = updatedTileGhost;
-            return true;
+
+        for (int i = 0; i < this.suspectList.size(); i++) {
+            int[] updatedGhostTile = this.suspectList.get(i).getPosInArray();
+            if (!Arrays.equals(this.pacmanCurrentTile, updatedTilePac)) {
+                this.pacmanCurrentTile = updatedTilePac;
+                return true;
+            }
+            if (!Arrays.equals(this.ghostCurrentTile, updatedGhostTile)) {
+                this.ghostCurrentTile = updatedGhostTile;
+                return true;
+            }
         }
         return false;
     }
 
 
     public void updateGhostVisibility() {
+        /*
         double[] ghostCoords = this.redSus.getPos();
         double[] pacCoords = this.pacman.getPos();
 
         if ((Math.abs(ghostCoords[0]-pacCoords[0]) < 62.5) &&
                 (Math.abs(ghostCoords[1]-pacCoords[1]) < 62.5)) {
-            this.redSus.makeVisible(true);
+            this.redSus.toggleVisibility(true);
         } else {
-            this.redSus.makeVisible(false);
+            this.redSus.toggleVisibility(false);
         }
+
+         */
 
     }
 

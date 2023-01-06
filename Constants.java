@@ -18,7 +18,7 @@ public class Constants {
     public static final Color WALL_COLOR = Color.DARKGRAY.darker();
     public static final Color WAY_COLOR = Color.BLACK.brighter().brighter();
     public static final Duration UPDATE_GAME_EVERY = Duration.millis(1);
-    public static final Double MOVE_SPEED = 0.05;
+    public static final Double MOVE_SPEED = 0.07;
     public static final int PAC_RADIUS =  12;
     public static int TIMER_COUNT;
 

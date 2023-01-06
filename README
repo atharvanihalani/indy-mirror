@@ -1,9 +1,12 @@
 Indy README
 
 TODO
-    factor code out in mazeboard!!!
-    add decent graphics (esp for homescreen)
+    factor code out in mazeboard
+    redo stuff w libgdx??
+    revamp the home screen
     fix glitches
+    clean up comments & rest of da code
+
 
 Overview:
 

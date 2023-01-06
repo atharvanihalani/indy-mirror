@@ -88,7 +88,7 @@ public class HomePaneOrganizer {
                     Constants.QUIT_PANE_HEIGHT + Constants.TIMER_PANE_HEIGHT;
             Constants.TIMER_COUNT  = Constants.NUM_COLS*Constants.NUM_ROWS*2;
 
-            this.myApp.changeScene();
+            this.myApp.loadGameScene();
         }
     }
 

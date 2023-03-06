@@ -1,11 +1,17 @@
 package indy;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.value.WritableDoubleValue;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
+import javafx.util.Duration;
 
 import java.util.Stack;
 
@@ -19,14 +25,11 @@ public class Pacman {
     //current direction pacman's moving in
     private Direction currentDirection;
 
-    //stores the direction pacman wants to turn towards, if turning
-    //isn't currently possible
+    //stores the direction pacman wants to turn towards, if turning isn't  possible
     private Direction intendedDirection;
 
     //stores the standard 90° rotate transform for this composite shape
     private Rotate standardRotate;
-
-    //stack for backtracking
     private Stack<double[]> backTrackStack;
 
     /**
@@ -53,10 +56,8 @@ public class Pacman {
      * the game pane
      */
     private void setupPac() {
-        double openMouth = 5.0;
-
-        this.pacMouth.getPoints().addAll(12.0, 8-openMouth,
-                12.0, 8+openMouth,
+        this.pacMouth.getPoints().addAll(12.0, 13.0,
+                12.0, 3.0,
                 0.0, 8.0);
         this.pacMouth.setFill(Color.BLACK);
 
@@ -67,6 +68,7 @@ public class Pacman {
         this.pacMouth.setLayoutX(Constants.TILE_SIZE*2.5);
         this.pacMouth.setLayoutY(Constants.TILE_SIZE*2.5 - 8);
     }
+
 
     /**
      * Updated every moment. checks if motion is possible. if so, it
